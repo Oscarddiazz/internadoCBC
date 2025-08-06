@@ -1,0 +1,1 @@
+// Widget de Estado Vacío
