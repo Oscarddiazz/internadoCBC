@@ -1,1 +1,0 @@
-// Constantes de la aplicación
