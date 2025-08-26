@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen>
   late TabController _tabController;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _isNavigating = false;
 
   // Controladores para los campos de texto
   final TextEditingController _emailController = TextEditingController();
@@ -244,37 +245,6 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
           ),
         ),
-        const SizedBox(height: 20),
-        // Información de credenciales de prueba
-        Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue.shade200),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Credenciales de Prueba:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade800,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Admin: admin@test.com / admin123',
-                style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
-              ),
-              Text(
-                'Usuario: user@test.com / user123',
-                style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -341,9 +311,22 @@ class _LoginScreenState extends State<LoginScreen>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/register-step2');
-              },
+              onPressed: _isNavigating
+                  ? null
+                  : () {
+                      if (!_isNavigating) {
+                        setState(() {
+                          _isNavigating = true;
+                        });
+                        Navigator.pushNamed(context, '/register').then((_) {
+                          if (mounted) {
+                            setState(() {
+                              _isNavigating = false;
+                            });
+                          }
+                        });
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE8F5E8),
                 foregroundColor: const Color(0xFF2E7D32),

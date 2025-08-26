@@ -10,6 +10,14 @@ class HomeScreen extends StatelessWidget {
         title: const Text('BioHub'),
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configuracion');
+            },
+          ),
+        ],
       ),
       body: const Center(
         child: Column(

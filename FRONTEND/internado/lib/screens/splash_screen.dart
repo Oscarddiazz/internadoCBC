@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,17 +36,35 @@ class _SplashScreenState extends State<SplashScreen>
     _startSplashAnimation();
   }
 
-  void _startSplashAnimation() {
+  void _startSplashAnimation() async {
     // Reiniciar animación
     _animationController.reset();
     _animationController.forward();
 
-    // Navegar a la pantalla de bienvenida después de 5 segundos
-    Timer(const Duration(seconds: 5), () {
-      if (mounted) {
+    // Intentar cargar usuario desde almacenamiento
+    bool userLoaded = false;
+    try {
+      userLoaded = await AuthService.loadUserFromStorage();
+    } catch (e) {
+      print('Error cargando usuario: $e');
+    }
+
+    // Esperar al menos 3 segundos para la animación
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      if (userLoaded && AuthService.isLoggedIn) {
+        // Usuario ya está logueado, navegar según su rol
+        if (AuthService.isAdmin) {
+          Navigator.pushReplacementNamed(context, '/admin-dashboard');
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } else {
+        // Usuario no está logueado, ir a pantalla de bienvenida
         Navigator.pushReplacementNamed(context, '/welcome');
       }
-    });
+    }
   }
 
   @override

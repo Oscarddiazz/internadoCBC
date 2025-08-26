@@ -4,6 +4,19 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Panel de Administración'),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configuracion');
+            },
+          ),
+        ],
+      ),
       backgroundColor: Color(0xFFF6FBE4), // Light cream background
       body: SafeArea(
         child: Padding(
