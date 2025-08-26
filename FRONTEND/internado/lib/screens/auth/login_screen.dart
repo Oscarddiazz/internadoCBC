@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +12,11 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  // Controladores para los campos de texto
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -22,6 +28,34 @@ class _LoginScreenState extends State<LoginScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor completa todos los campos'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await AuthService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+        context,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -99,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: _emailController,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -132,6 +167,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: _passwordController,
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             filled: true,
@@ -182,10 +218,7 @@ class _LoginScreenState extends State<LoginScreen>
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
-              // Navegar a la pantalla de carga para simular recarga
-              Navigator.pushReplacementNamed(context, '/');
-            },
+            onPressed: _isLoading ? null : _handleLogin,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE8F5E8),
               foregroundColor: const Color(0xFF2E7D32),
@@ -195,10 +228,51 @@ class _LoginScreenState extends State<LoginScreen>
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
             ),
-            child: const Text(
-              'Iniciar Sesion',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
+            child: _isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF2E7D32),
+                      ),
+                    ),
+                  )
+                : const Text(
+                    'Iniciar Sesion',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        // Información de credenciales de prueba
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.blue.shade200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Credenciales de Prueba:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Admin: admin@test.com / admin123',
+                style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
+              ),
+              Text(
+                'Usuario: user@test.com / user123',
+                style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
+              ),
+            ],
           ),
         ),
       ],
