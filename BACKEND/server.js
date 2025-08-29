@@ -31,8 +31,18 @@ app.use(limiter);
 
 // Middleware para CORS
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:8000'],
-  credentials: true
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:8080', 
+    'http://localhost:8000',
+    'http://localhost:3001', // Puerto por defecto de Flutter web
+    'http://127.0.0.1:3001', // IP local para Flutter web
+    'http://localhost:5000', // Puerto alternativo de Flutter web
+    'http://127.0.0.1:5000'  // IP local alternativa
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Middleware para parsear JSON

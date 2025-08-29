@@ -1,13 +1,28 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+
 class AppConfig {
-  // URLs del backend
-  // Para emulador Android usar 10.0.2.2
-  static const String baseUrl = 'http://10.0.2.2:3000/api';
+  // URLs del backend - Configuración simple y directa
+  static String get baseUrl {
+    // Para web, usar localhost
+    if (kIsWeb) {
+      return 'http://localhost:3000/api';
+    }
 
-  // Para localhost (solo funciona en web o iOS simulator)
-  // static const String baseUrl = 'http://localhost:3000/api';
+    // Para Android emulator, usar 10.0.2.2
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3000/api';
+    }
 
-  // Para dispositivos físicos, cambiar a la IP de tu computadora
-  // static const String baseUrl = 'http://192.168.1.XXX:3000/api';
+    // Para iOS simulator, usar localhost
+    if (Platform.isIOS) {
+      return 'http://localhost:3000/api';
+    }
+
+    // Para dispositivos físicos, usar la IP de tu computadora
+    // CAMBIA ESTA IP POR LA IP DE TU COMPUTADORA
+    return 'http://192.168.1.100:3000/api';
+  }
 
   // Configuración de la aplicación
   static const String appName = 'BioHub - Sistema de Internado';
@@ -42,4 +57,24 @@ class AppConfig {
     'aprendiz': 'carlos.gomez@sena.edu.co',
     'aprendiz_password': 'aprendiz1',
   };
+
+  // Método para obtener información de la plataforma actual
+  static String get platformInfo {
+    if (kIsWeb) {
+      return 'Web';
+    } else if (Platform.isAndroid) {
+      return 'Android';
+    } else if (Platform.isIOS) {
+      return 'iOS';
+    } else {
+      return 'Unknown';
+    }
+  }
+
+  // Método para debug - mostrar la URL que se está usando
+  static void printCurrentConfig() {
+    print('🌐 Plataforma: $platformInfo');
+    print('🔗 URL Base: $baseUrl');
+    print('📱 App: $appName v$appVersion');
+  }
 }

@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'routes/app_routes.dart';
+import 'config/app_config.dart';
+import 'services/api_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Mostrar configuración al iniciar
+  AppConfig.printCurrentConfig();
+  ApiService.printApiConfig();
+
   runApp(const MyApp());
 }
 

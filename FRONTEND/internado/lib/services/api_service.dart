@@ -4,7 +4,7 @@ import '../models/usuario.dart';
 import '../config/app_config.dart';
 
 class ApiService {
-  static const String baseUrl = AppConfig.baseUrl;
+  static String get baseUrl => AppConfig.baseUrl;
   static String? _token;
 
   // Configurar token de autenticación
@@ -404,5 +404,13 @@ class ApiService {
   // Cerrar sesión
   static void logout() {
     _token = null;
+  }
+
+  // Método para debug - mostrar configuración actual
+  static void printApiConfig() {
+    print('🔧 API Service Configuration:');
+    print('   Base URL: $baseUrl');
+    print('   Token: ${_token != null ? "Presente" : "No presente"}');
+    AppConfig.printCurrentConfig();
   }
 }
