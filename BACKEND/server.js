@@ -32,13 +32,20 @@ app.use(limiter);
 // Middleware para CORS
 app.use(cors({
   origin: [
-    'http://localhost:3000', 
-    'http://localhost:8080', 
+    'http://localhost:3000',
+    'http://localhost:8080',
     'http://localhost:8000',
     'http://localhost:3001', // Puerto por defecto de Flutter web
     'http://127.0.0.1:3001', // IP local para Flutter web
     'http://localhost:5000', // Puerto alternativo de Flutter web
-    'http://127.0.0.1:5000'  // IP local alternativa
+    'http://127.0.0.1:5000', // IP local alternativa
+    'http://localhost:4200', // Puerto común para desarrollo web
+    'http://localhost:8080', // Puerto común para desarrollo web
+    'http://localhost:9000', // Puerto común para desarrollo web
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:4200',
+    'http://127.0.0.1:9000'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -93,7 +100,7 @@ app.use('*', (req, res) => {
 // Middleware para manejar errores
 app.use((error, req, res, next) => {
   console.error('Error del servidor:', error);
-  
+
   res.status(error.status || 500).json({
     success: false,
     message: error.message || 'Error interno del servidor',
@@ -106,7 +113,7 @@ const startServer = async () => {
   try {
     // Probar conexión a la base de datos
     const dbConnected = await testConnection();
-    
+
     if (!dbConnected) {
       console.error('❌ No se pudo conectar a la base de datos. Verifica la configuración.');
       process.exit(1);
