@@ -82,8 +82,14 @@ class AdminDashboard extends StatelessWidget {
                           // Permisos - Verde
                           CircularButton(
                             color: Color(0xFF69B840),
-                            text: 'Permisos',
+                            text: 'Solicitudes\nPermiso',
                             size: 140,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/solicitudes-permiso',
+                              );
+                            },
                           ),
                         ],
                       ),

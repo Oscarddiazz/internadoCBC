@@ -9,6 +9,7 @@ import '../screens/admin/inicio_admin.dart';
 import '../screens/admin/aprendices_registrados/aprendiz_registrado.dart';
 import '../screens/admin/aprendices_registrados/vista_aprendiz.dart';
 import '../screens/configuracion_screen.dart';
+import '../screens/admin/permisos/permisos_solicitados.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -39,6 +40,8 @@ class AppRoutes {
 
   // Rutas de gestión de permisos
   static const String gestionPermisos = '/gestion-permisos';
+  // Ruta legible para la UI
+  static const String solicitudesPermiso = '/solicitudes-permiso';
   static const String crearPermiso = '/crear-permiso';
   static const String detallePermiso = '/detalle-permiso';
   static const String misPermisos = '/mis-permisos';
@@ -101,8 +104,9 @@ class AppRoutes {
       detalleTarea: (context) => _buildPlaceholder('Detalle de Tarea'),
       misTareas: (context) => _buildPlaceholder('Mis Tareas'),
 
-      // Rutas de gestión de permisos (placeholder)
-      gestionPermisos: (context) => _buildPlaceholder('Gestión de Permisos'),
+  // Rutas de gestión de permisos
+  gestionPermisos: (context) => const SolicitudesPermiso(),
+  solicitudesPermiso: (context) => const SolicitudesPermiso(),
       crearPermiso: (context) => _buildPlaceholder('Crear Permiso'),
       detallePermiso: (context) => _buildPlaceholder('Detalle de Permiso'),
       misPermisos: (context) => _buildPlaceholder('Mis Permisos'),
