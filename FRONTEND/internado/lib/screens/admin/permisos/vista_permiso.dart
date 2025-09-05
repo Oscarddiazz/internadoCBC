@@ -24,6 +24,9 @@ class _VistaPermisoState extends State<VistaPermiso> {
     });
   }
 
+  // Variables para el BottomNavigationBar
+  int _selectedIndex = 0; // Variable para controlar el índice seleccionado
+
   Future<void> _firmar() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.gallery, // o ImageSource.camera
@@ -234,6 +237,37 @@ class _VistaPermisoState extends State<VistaPermiso> {
             ),
           ),
         ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFFF6FBE4),
+        elevation: 0,
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          // Navegación según el índice seleccionado
+          switch (index) {
+            case 0: // Home
+              Navigator.pushReplacementNamed(context, '/admin-dashboard');
+              break;
+            case 1: // Perfil (ya estamos aquí)
+              break;
+            case 2: // Configuración
+              Navigator.pushNamed(context, '/configuracion');
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            label: '',
+          ),
+        ],
       ),
     );
   }

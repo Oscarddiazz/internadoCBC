@@ -143,35 +143,44 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
   void _applyFilters() {
     setState(() {
       // Filtrar por búsqueda (nombre, apellido, email, ficha)
-      filteredApprentices = allApprentices.where((apprentice) {
-        final searchLower = searchQuery.toLowerCase();
-        return apprentice['user_name'].toLowerCase().contains(searchLower) ||
-            apprentice['user_ape'].toLowerCase().contains(searchLower) ||
-            apprentice['user_email'].toLowerCase().contains(searchLower) ||
-            apprentice['ficha_Apr'].toString().contains(searchQuery) ||
-            apprentice['user_num_ident'].contains(searchQuery);
-      }).toList();
+      filteredApprentices =
+          allApprentices.where((apprentice) {
+            final searchLower = searchQuery.toLowerCase();
+            return apprentice['user_name'].toLowerCase().contains(
+                  searchLower,
+                ) ||
+                apprentice['user_ape'].toLowerCase().contains(searchLower) ||
+                apprentice['user_email'].toLowerCase().contains(searchLower) ||
+                apprentice['ficha_Apr'].toString().contains(searchQuery) ||
+                apprentice['user_num_ident'].contains(searchQuery);
+          }).toList();
 
       // Filtrar por foto
       if (photoFilter == 'Con foto') {
-        filteredApprentices = filteredApprentices
-            .where((apprentice) => apprentice['hasPhoto'] == true)
-            .toList();
+        filteredApprentices =
+            filteredApprentices
+                .where((apprentice) => apprentice['hasPhoto'] == true)
+                .toList();
       } else if (photoFilter == 'Sin foto') {
-        filteredApprentices = filteredApprentices
-            .where((apprentice) => apprentice['hasPhoto'] == false)
-            .toList();
+        filteredApprentices =
+            filteredApprentices
+                .where((apprentice) => apprentice['hasPhoto'] == false)
+                .toList();
       }
 
       // Filtrar por etapa formativa
       if (etapaFilter == 'Lectiva') {
-        filteredApprentices = filteredApprentices
-            .where((apprentice) => apprentice['etp_form_Apr'] == 'Lectiva')
-            .toList();
+        filteredApprentices =
+            filteredApprentices
+                .where((apprentice) => apprentice['etp_form_Apr'] == 'Lectiva')
+                .toList();
       } else if (etapaFilter == 'Productiva') {
-        filteredApprentices = filteredApprentices
-            .where((apprentice) => apprentice['etp_form_Apr'] == 'Productiva')
-            .toList();
+        filteredApprentices =
+            filteredApprentices
+                .where(
+                  (apprentice) => apprentice['etp_form_Apr'] == 'Productiva',
+                )
+                .toList();
       }
 
       // Ordenar por nombre completo
@@ -201,225 +210,246 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.75,
-          ),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header del modal
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Filtros',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Colors.black),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Información del modal
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.shade200),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setModalState) => Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.75,
                   ),
-                  child: Text(
-                    'La búsqueda principal se realiza desde el campo de arriba. Aquí puedes configurar filtros adicionales.',
-                    style: TextStyle(color: Colors.blue.shade800, fontSize: 13),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Ordenar
-                const Text(
-                  'Ordenar por:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('A-Z'),
-                        value: 'A-Z',
-                        groupValue: tempSortOrder,
-                        onChanged: (value) {
-                          setModalState(() {
-                            tempSortOrder = value!;
-                          });
-                        },
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Z-A'),
-                        value: 'Z-A',
-                        groupValue: tempSortOrder,
-                        onChanged: (value) {
-                          setModalState(() {
-                            tempSortOrder = value!;
-                          });
-                        },
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Filtro por foto
-                const Text(
-                  'Filtrar por foto:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: tempPhotoFilter,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
                     ),
                   ),
-                  items: ['Todos', 'Con foto', 'Sin foto'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setModalState(() {
-                      tempPhotoFilter = value!;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Filtro por etapa formativa
-                const Text(
-                  'Filtrar por etapa:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: tempEtapaFilter,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                  ),
-                  items: ['Todas', 'Lectiva', 'Productiva'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setModalState(() {
-                      tempEtapaFilter = value!;
-                    });
-                  },
-                ),
-
-                const SizedBox(height: 20),
-
-                // Botones de acción
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          // Limpiar filtros
-                          tempSearchQuery = '';
-                          tempSortOrder = 'A-Z';
-                          tempPhotoFilter = 'Todos';
-                          tempEtapaFilter = 'Todas';
-                          setModalState(() {});
-                        },
-                        child: const Text(
-                          'Limpiar',
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                  padding: const EdgeInsets.all(20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Header del modal
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Filtros',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      flex: 2,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Aplicar filtros
-                          searchQuery = tempSearchQuery;
-                          sortOrder = tempSortOrder;
-                          photoFilter = tempPhotoFilter;
-                          etapaFilter = tempEtapaFilter;
-                          _applyFilters();
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4CAF50),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
+                        const SizedBox(height: 16),
+
+                        // Información del modal
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.blue.shade200),
+                          ),
+                          child: Text(
+                            'La búsqueda principal se realiza desde el campo de arriba. Aquí puedes configurar filtros adicionales.',
+                            style: TextStyle(
+                              color: Colors.blue.shade800,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'Aplicar Filtros',
+                        const SizedBox(height: 16),
+
+                        // Ordenar
+                        const Text(
+                          'Ordenar por:',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
+                            color: Colors.black,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: const Text('A-Z'),
+                                value: 'A-Z',
+                                groupValue: tempSortOrder,
+                                onChanged: (value) {
+                                  setModalState(() {
+                                    tempSortOrder = value!;
+                                  });
+                                },
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: const Text('Z-A'),
+                                value: 'Z-A',
+                                groupValue: tempSortOrder,
+                                onChanged: (value) {
+                                  setModalState(() {
+                                    tempSortOrder = value!;
+                                  });
+                                },
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Filtro por foto
+                        const Text(
+                          'Filtrar por foto:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: tempPhotoFilter,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          items:
+                              ['Todos', 'Con foto', 'Sin foto'].map((
+                                String value,
+                              ) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setModalState(() {
+                              tempPhotoFilter = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Filtro por etapa formativa
+                        const Text(
+                          'Filtrar por etapa:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: tempEtapaFilter,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          items:
+                              ['Todas', 'Lectiva', 'Productiva'].map((
+                                String value,
+                              ) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setModalState(() {
+                              tempEtapaFilter = value!;
+                            });
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Botones de acción
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  // Limpiar filtros
+                                  tempSearchQuery = '';
+                                  tempSortOrder = 'A-Z';
+                                  tempPhotoFilter = 'Todos';
+                                  tempEtapaFilter = 'Todas';
+                                  setModalState(() {});
+                                },
+                                child: const Text(
+                                  'Limpiar',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 2,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Aplicar filtros
+                                  searchQuery = tempSearchQuery;
+                                  sortOrder = tempSortOrder;
+                                  photoFilter = tempPhotoFilter;
+                                  etapaFilter = tempEtapaFilter;
+                                  _applyFilters();
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4CAF50),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Aplicar Filtros',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ],
-            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -586,119 +616,128 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
 
                       // Apprentices List
                       Expanded(
-                        child: filteredApprentices.isEmpty
-                            ? const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.search_off,
-                                      size: 64,
-                                      color: Colors.black54,
-                                    ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      'No se encontraron aprendices',
-                                      style: TextStyle(
+                        child:
+                            filteredApprentices.isEmpty
+                                ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.search_off,
+                                        size: 64,
                                         color: Colors.black54,
-                                        fontSize: 18,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: filteredApprentices.length,
-                                itemBuilder: (context, index) {
-                                  final apprentice = filteredApprentices[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/vista-aprendiz',
-                                        arguments: apprentice,
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.3),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: Colors.white.withOpacity(0.5),
-                                          width: 1,
+                                      SizedBox(height: 16),
+                                      Text(
+                                        'No se encontraron aprendices',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                      padding: const EdgeInsets.all(16),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 64,
-                                            height: 64,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(
-                                              Icons.person,
-                                              color: Colors.black,
-                                              size: 32,
-                                            ),
+                                    ],
+                                  ),
+                                )
+                                : ListView.builder(
+                                  itemCount: filteredApprentices.length,
+                                  itemBuilder: (context, index) {
+                                    final apprentice =
+                                        filteredApprentices[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/vista-aprendiz',
+                                          arguments: apprentice,
+                                        );
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.3),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
-                                          const SizedBox(width: 16),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${apprentice['user_name']} ${apprentice['user_ape']}',
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                    height: 1.2,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  'Ficha: ${apprentice['ficha_Apr']} | ${apprentice['etp_form_Apr']}',
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '${apprentice['user_email']}',
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(
+                                              0.5,
                                             ),
+                                            width: 1,
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(
-                                                0.2,
+                                        ),
+                                        padding: const EdgeInsets.all(16),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 64,
+                                              height: 64,
+                                              decoration: const BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                              child: const Icon(
+                                                Icons.person,
+                                                color: Colors.black,
+                                                size: 32,
+                                              ),
                                             ),
-                                            child: const Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.black54,
-                                              size: 16,
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${apprentice['user_name']} ${apprentice['user_ape']}',
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      height: 1.2,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    'Ficha: ${apprentice['ficha_Apr']} | ${apprentice['etp_form_Apr']}',
+                                                    style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${apprentice['user_email']}',
+                                                    style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            Container(
+                                              padding: const EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withOpacity(
+                                                  0.2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.black54,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                    );
+                                  },
+                                ),
                       ),
                     ],
                   ),
@@ -726,7 +765,7 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
             case 1: // Perfil (ya estamos aquí)
               break;
             case 2: // Configuración
-              // Aquí puedes agregar navegación a configuración
+              Navigator.pushNamed(context, '/configuracion');
               break;
           }
         },
