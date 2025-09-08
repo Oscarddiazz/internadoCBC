@@ -5,10 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
-    "setup": "node setup.js",
-    "test": "node test_connection.js",
-    "test:api": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js"
   },
   "keywords": ["internado", "sena", "nodejs", "mysql"],
   "author": "CBC Team",
@@ -26,7 +23,6 @@
     "express-rate-limit": "^7.1.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "axios": "^1.6.2"
+    "nodemon": "^3.0.2"
   }
 }

@@ -1,4 +1,4 @@
-enum EstadoTarea { pendiente, en_proceso, completada, cancelada }
+enum EstadoTarea { pendiente, enProceso, completada, cancelada }
 
 class Tarea {
   final int? tareaId;
@@ -27,18 +27,21 @@ class Tarea {
     return Tarea(
       tareaId: json['tarea_id'],
       tareaDescripcion: json['tarea_descripcion'] ?? '',
-      tareaFecEntrega: json['tarea_fec_entrega'] != null
-          ? DateTime.parse(json['tarea_fec_entrega'])
-          : DateTime.now(),
+      tareaFecEntrega:
+          json['tarea_fec_entrega'] != null
+              ? DateTime.parse(json['tarea_fec_entrega'])
+              : DateTime.now(),
       tareaAprendizId: json['tarea_aprendiz_id'] ?? 0,
       tareaEvidencia: json['tarea_evidencia'],
       tareaEstado: _mapEstadoFromString(json['tarea_estado']),
-      tareaFecCompletada: json['tarea_fec_completada'] != null
-          ? DateTime.parse(json['tarea_fec_completada'])
-          : null,
-      tareaFecCreacion: json['tarea_fec_creacion'] != null
-          ? DateTime.parse(json['tarea_fec_creacion'])
-          : DateTime.now(),
+      tareaFecCompletada:
+          json['tarea_fec_completada'] != null
+              ? DateTime.parse(json['tarea_fec_completada'])
+              : null,
+      tareaFecCreacion:
+          json['tarea_fec_creacion'] != null
+              ? DateTime.parse(json['tarea_fec_creacion'])
+              : DateTime.now(),
       tareaObservaciones: json['tarea_observaciones'],
     );
   }
@@ -63,7 +66,7 @@ class Tarea {
         return EstadoTarea.pendiente;
       case 'en_proceso':
       case 'en proceso':
-        return EstadoTarea.en_proceso;
+        return EstadoTarea.enProceso;
       case 'completada':
         return EstadoTarea.completada;
       case 'cancelada':
@@ -77,7 +80,7 @@ class Tarea {
     switch (estado) {
       case EstadoTarea.pendiente:
         return 'pendiente';
-      case EstadoTarea.en_proceso:
+      case EstadoTarea.enProceso:
         return 'en_proceso';
       case EstadoTarea.completada:
         return 'completada';
@@ -90,7 +93,7 @@ class Tarea {
     switch (tareaEstado) {
       case EstadoTarea.pendiente:
         return 'Pendiente';
-      case EstadoTarea.en_proceso:
+      case EstadoTarea.enProceso:
         return 'En Proceso';
       case EstadoTarea.completada:
         return 'Completada';
@@ -101,7 +104,7 @@ class Tarea {
 
   bool get isCompletada => tareaEstado == EstadoTarea.completada;
   bool get isPendiente => tareaEstado == EstadoTarea.pendiente;
-  bool get isEnProceso => tareaEstado == EstadoTarea.en_proceso;
+  bool get isEnProceso => tareaEstado == EstadoTarea.enProceso;
   bool get isCancelada => tareaEstado == EstadoTarea.cancelada;
 
   bool get isVencida =>

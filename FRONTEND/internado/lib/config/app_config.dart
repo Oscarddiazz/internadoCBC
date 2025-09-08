@@ -1,28 +1,10 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'network_config.dart';
 
 class AppConfig {
-  // URLs del backend - Configuración simple y directa
-  static String get baseUrl {
-    // Para web, usar localhost
-    if (kIsWeb) {
-      return 'http://localhost:3000/api';
-    }
-
-    // Para Android emulator, usar 10.0.2.2
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:3000/api';
-    }
-
-    // Para iOS simulator, usar localhost
-    if (Platform.isIOS) {
-      return 'http://localhost:3000/api';
-    }
-
-    // Para dispositivos físicos, usar la IP de tu computadora
-    // CAMBIA ESTA IP POR LA IP DE TU COMPUTADORA
-    return 'http://192.168.1.100:3000/api';
-  }
+  // URLs del backend - Configuración flexible usando NetworkConfig
+  static String get baseUrl => NetworkConfig.baseUrl;
 
   // Configuración de la aplicación
   static const String appName = 'BioHub - Sistema de Internado';
@@ -71,10 +53,13 @@ class AppConfig {
     }
   }
 
-  // Método para debug - mostrar la URL que se está usando
+  // Método para debug - mostrar la URL que se está usando (solo en debug)
   static void printCurrentConfig() {
-    print('🌐 Plataforma: $platformInfo');
-    print('🔗 URL Base: $baseUrl');
-    print('📱 App: $appName v$appVersion');
+    if (kDebugMode) {
+      debugPrint('🌐 Plataforma: $platformInfo');
+      debugPrint('🔗 URL Base: $baseUrl');
+      debugPrint('📱 App: $appName v$appVersion');
+      NetworkConfig.printConfig();
+    }
   }
 }

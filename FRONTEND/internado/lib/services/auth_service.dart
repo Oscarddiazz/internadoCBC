@@ -40,12 +40,14 @@ class AuthService {
           userGen: _mapGeneroFromString(userData['user_gen']),
           userEtn: _mapEtniaFromString(userData['user_etn']),
           userImg: userData['user_img'] ?? 'default.png',
-          fecIniFormApr: userData['fec_ini_form_Apr'] != null
-              ? DateTime.parse(userData['fec_ini_form_Apr'])
-              : DateTime.now(),
-          fecFinFormApr: userData['fec_fin_form_Apr'] != null
-              ? DateTime.parse(userData['fec_fin_form_Apr'])
-              : DateTime.now().add(Duration(days: 365)),
+          fecIniFormApr:
+              userData['fec_ini_form_Apr'] != null
+                  ? DateTime.parse(userData['fec_ini_form_Apr'])
+                  : DateTime.now(),
+          fecFinFormApr:
+              userData['fec_fin_form_Apr'] != null
+                  ? DateTime.parse(userData['fec_fin_form_Apr'])
+                  : DateTime.now().add(Duration(days: 365)),
           fichaApr: userData['ficha_Apr'] ?? 0,
         );
 
@@ -109,12 +111,14 @@ class AuthService {
             userGen: _mapGeneroFromString(userData['user_gen']),
             userEtn: _mapEtniaFromString(userData['user_etn']),
             userImg: userData['user_img'] ?? 'default.png',
-            fecIniFormApr: userData['fec_ini_form_Apr'] != null
-                ? DateTime.parse(userData['fec_ini_form_Apr'])
-                : DateTime.now(),
-            fecFinFormApr: userData['fec_fin_form_Apr'] != null
-                ? DateTime.parse(userData['fec_fin_form_Apr'])
-                : DateTime.now().add(Duration(days: 365)),
+            fecIniFormApr:
+                userData['fec_ini_form_Apr'] != null
+                    ? DateTime.parse(userData['fec_ini_form_Apr'])
+                    : DateTime.now(),
+            fecFinFormApr:
+                userData['fec_fin_form_Apr'] != null
+                    ? DateTime.parse(userData['fec_fin_form_Apr'])
+                    : DateTime.now().add(Duration(days: 365)),
             fichaApr: userData['ficha_Apr'] ?? 0,
           );
           return true;
@@ -158,12 +162,14 @@ class AuthService {
           userGen: _mapGeneroFromString(userDataResponse['user_gen']),
           userEtn: _mapEtniaFromString(userDataResponse['user_etn']),
           userImg: userDataResponse['user_img'] ?? 'default.png',
-          fecIniFormApr: userDataResponse['fec_ini_form_Apr'] != null
-              ? DateTime.parse(userDataResponse['fec_ini_form_Apr'])
-              : DateTime.now(),
-          fecFinFormApr: userDataResponse['fec_fin_form_Apr'] != null
-              ? DateTime.parse(userDataResponse['fec_fin_form_Apr'])
-              : DateTime.now().add(Duration(days: 365)),
+          fecIniFormApr:
+              userDataResponse['fec_ini_form_Apr'] != null
+                  ? DateTime.parse(userDataResponse['fec_ini_form_Apr'])
+                  : DateTime.now(),
+          fecFinFormApr:
+              userDataResponse['fec_fin_form_Apr'] != null
+                  ? DateTime.parse(userDataResponse['fec_fin_form_Apr'])
+                  : DateTime.now().add(Duration(days: 365)),
           fichaApr: userDataResponse['ficha_Apr'] ?? 0,
         );
 
@@ -288,7 +294,7 @@ class AuthService {
     switch (etnia?.toLowerCase()) {
       case 'no aplica':
       case 'no_aplica':
-        return EtniaType.no_aplica;
+        return EtniaType.noAplica;
       case 'indígena':
       case 'indigina':
         return EtniaType.indigina;
@@ -296,7 +302,7 @@ class AuthService {
       case 'afrodescendiente':
         return EtniaType.afrodescendiente;
       default:
-        return EtniaType.no_aplica;
+        return EtniaType.noAplica;
     }
   }
 }

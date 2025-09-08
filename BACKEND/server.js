@@ -11,6 +11,7 @@ const { testConnection } = require('./config/database');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const taskRoutes = require('./routes/tasks');
+const permissionRoutes = require('./routes/permissions');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,27 +30,43 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(limiter);
 
-// Middleware para CORS
+// Middleware para CORS - Configuración optimizada
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:8080',
-    'http://localhost:8000',
-    'http://localhost:3001', // Puerto por defecto de Flutter web
-    'http://127.0.0.1:3001', // IP local para Flutter web
-    'http://localhost:5000', // Puerto alternativo de Flutter web
-    'http://127.0.0.1:5000', // IP local alternativa
-    'http://localhost:4200', // Puerto común para desarrollo web
-    'http://localhost:8080', // Puerto común para desarrollo web
-    'http://localhost:9000', // Puerto común para desarrollo web
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:8080',
-    'http://127.0.0.1:4200',
-    'http://127.0.0.1:9000'
-  ],
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (aplicaciones móviles, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Lista de orígenes permitidos con regex para flexibilidad
+    const allowedOrigins = [
+      /^http:\/\/localhost:\d+$/,
+      /^http:\/\/127\.0\.0\.1:\d+$/,
+      /^http:\/\/192\.168\.\d+\.\d+:\d+$/,
+      /^http:\/\/10\.0\.\d+\.\d+:\d+$/,
+      'http://10.0.2.2:3000', // Emulador Android
+      'http://10.0.2.2:8080',
+      'http://10.0.2.2:8000'
+    ];
+    
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+    
+    callback(null, isAllowed);
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ]
 }));
 
 // Middleware para parsear JSON
@@ -59,7 +76,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Middleware para servir archivos estáticos
 app.use('/uploads', express.static('uploads'));
 
-// Ruta de prueba
+// Ruta principal
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -84,10 +101,11 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Configurar rutas
+// Configurar rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/permissions', permissionRoutes);
 
 // Middleware para manejar rutas no encontradas
 app.use('*', (req, res) => {
@@ -100,11 +118,9 @@ app.use('*', (req, res) => {
 // Middleware para manejar errores
 app.use((error, req, res, next) => {
   console.error('Error del servidor:', error);
-
   res.status(error.status || 500).json({
     success: false,
-    message: error.message || 'Error interno del servidor',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+    message: error.message || 'Error interno del servidor'
   });
 });
 
@@ -113,19 +129,19 @@ const startServer = async () => {
   try {
     // Probar conexión a la base de datos
     const dbConnected = await testConnection();
-
     if (!dbConnected) {
-      console.error('❌ No se pudo conectar a la base de datos. Verifica la configuración.');
+      console.error('❌ No se pudo conectar a la base de datos');
       process.exit(1);
     }
 
     // Iniciar servidor
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor iniciado en el puerto ${PORT}`);
-      console.log(`📊 Modo: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 URL: http://localhost:${PORT}`);
-      console.log(`📚 Documentación: http://localhost:${PORT}/`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log('\n🚀 ===== SERVIDOR INICIADO =====');
+      console.log(`📊 Puerto: ${PORT}`);
+      console.log(`🌐 Web: http://localhost:${PORT}`);
+      console.log(`📱 Android: http://10.0.2.2:${PORT}`);
       console.log(`💚 Estado: http://localhost:${PORT}/health`);
+      console.log('================================\n');
     });
 
   } catch (error) {
@@ -136,12 +152,12 @@ const startServer = async () => {
 
 // Manejar señales de terminación
 process.on('SIGTERM', () => {
-  console.log('🛑 Señal SIGTERM recibida, cerrando servidor...');
+  console.log('🛑 Cerrando servidor...');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Señal SIGINT recibida, cerrando servidor...');
+  console.log('🛑 Cerrando servidor...');
   process.exit(0);
 });
 

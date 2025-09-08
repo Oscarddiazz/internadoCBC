@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/terminos_condiciones.dart';
+// import '../../utils/terminos_condiciones.dart'; // Archivo eliminado
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -37,9 +37,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(TerminosCondiciones.titulo),
-          content: SingleChildScrollView(
-            child: Text(TerminosCondiciones.contenido),
+          title: const Text('Términos y Condiciones'),
+          content: const SingleChildScrollView(
+            child: Text(
+              'Al registrarte, aceptas nuestros términos y condiciones de uso.',
+            ),
           ),
           actions: [
             TextButton(
@@ -448,12 +450,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 vertical: 16,
               ),
             ),
-            items: options.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList(),
+            items:
+                options.map((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
             onChanged: onChanged,
             hint: const Text('Seleccionar'),
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black87),

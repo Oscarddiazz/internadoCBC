@@ -6,7 +6,7 @@ enum EtapaType { lectiva, productiva }
 
 enum GeneroType { masculino, femenino }
 
-enum EtniaType { indigina, afrodescendiente, no_aplica }
+enum EtniaType { indigina, afrodescendiente, noAplica }
 
 class Usuario {
   final int? userId;
@@ -75,9 +75,10 @@ class Usuario {
       fecIniFormApr: DateTime.parse(json['fec_ini_form_Apr']),
       fecFinFormApr: DateTime.parse(json['fec_fin_form_Apr']),
       fichaApr: json['ficha_Apr'],
-      fecRegistro: json['fec_registro'] != null
-          ? DateTime.parse(json['fec_registro'])
-          : null,
+      fecRegistro:
+          json['fec_registro'] != null
+              ? DateTime.parse(json['fec_registro'])
+              : null,
     );
   }
 

@@ -1,16 +1,81 @@
-# internado
+# 📱 Frontend Internado CBC
 
-A new Flutter project.
+Aplicación Flutter optimizada para el sistema de gestión de internado CBC.
 
-## Getting Started
+## ⚡ Inicio Rápido
 
-This project is a starting point for a Flutter application.
+### 1. Instalar dependencias
+```bash
+flutter pub get
+```
 
-A few resources to get you started if this is your first Flutter project:
+### 2. Configurar backend
+- Asegúrate de que el backend esté ejecutándose
+- La app se conecta automáticamente según la plataforma:
+  - **Web:** http://localhost:3000
+  - **Android Emulator:** http://10.0.2.2:3000
+  - **iOS Simulator:** http://localhost:3000
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 3. Ejecutar aplicación
+```bash
+# Web
+flutter run -d chrome
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Android
+flutter run
+
+# iOS
+flutter run -d ios
+```
+
+## 🎯 Características
+
+✅ **Autenticación completa** - Login y registro  
+✅ **Gestión de usuarios** - CRUD de aprendices  
+✅ **Gestión de permisos** - Solicitudes y aprobaciones  
+✅ **Interfaz responsiva** - Funciona en web y móvil  
+✅ **Configuración automática** - Se conecta automáticamente al backend  
+✅ **Código optimizado** - Solo funcionalidades esenciales  
+
+## 📱 Pantallas Principales
+
+- **Splash** - Pantalla de carga
+- **Welcome** - Pantalla de bienvenida
+- **Login/Register** - Autenticación
+- **Home** - Pantalla principal
+- **Admin Dashboard** - Panel de administración
+- **Configuración** - Ajustes de la app
+
+## 🔧 Configuración
+
+### Cambiar IP del backend
+```dart
+// En lib/config/network_config.dart
+NetworkConfig.setLocalIP('192.168.1.100');
+```
+
+### Cambiar puerto
+```dart
+NetworkConfig.setPort(8080);
+```
+
+## 📦 Dependencias Principales
+
+- `http` - Peticiones HTTP
+- `shared_preferences` - Almacenamiento local
+- `flutter/material` - UI Material Design
+
+## 🚀 Estructura Optimizada
+
+```
+lib/
+├── config/           # Configuración de red y app
+├── models/           # Modelos de datos
+├── routes/           # Rutas de navegación
+├── screens/          # Pantallas de la app
+├── services/         # Servicios de API
+└── utils/            # Utilidades
+```
+
+---
+**¡App optimizada y lista para usar! 🎉**

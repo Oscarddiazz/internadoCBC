@@ -6,13 +6,10 @@ const dbConfig = {
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'internadocbc',
-  port: process.env.DB_PORT || 3307,
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true
+  queueLimit: 0
 };
 
 // Crear pool de conexiones
@@ -22,11 +19,11 @@ const pool = mysql.createPool(dbConfig);
 const testConnection = async () => {
   try {
     const connection = await pool.getConnection();
-    console.log('✅ Conexión a la base de datos establecida correctamente');
+    console.log('✅ Conexión a la base de datos establecida');
     connection.release();
     return true;
   } catch (error) {
-    console.error('❌ Error al conectar con la base de datos:', error.message);
+    console.error('❌ Error de conexión a la base de datos:', error.message);
     return false;
   }
 };
