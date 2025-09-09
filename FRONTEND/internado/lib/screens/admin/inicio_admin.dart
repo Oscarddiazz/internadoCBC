@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'documentos/cargar_documentos.dart'; // 👈 importa tu archivo
-import 'documentos/vista_documentos.dart'; // 👈 importa la nueva pantalla
+import 'documentos/cargar_documentos.dart';
+import 'documentos/vista_documentos.dart';
+import 'reportes/reporte_general.dart';
+import 'reportes/reporte_aprendiz.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -37,6 +39,52 @@ class AdminDashboard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const VisualizarDocumentos(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cerrar"),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _mostrarOpcionesReportes(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Reportes"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.insert_chart, color: Colors.blue),
+                  title: const Text("Reporte general"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReporteGeneral()),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.person, color: Colors.green),
+                  title: const Text("Reporte aprendiz"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReporteAprendizPage(),
                       ),
                     );
                   },
@@ -158,6 +206,9 @@ class AdminDashboard extends StatelessWidget {
                             color: const Color(0xFF879D9A),
                             text: 'Reportes',
                             size: 140,
+                            onTap: () {
+                              _mostrarOpcionesReportes(context);
+                            },
                           ),
                         ],
                       ),
