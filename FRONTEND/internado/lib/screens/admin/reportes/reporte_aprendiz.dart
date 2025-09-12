@@ -1,9 +1,15 @@
-//Pantalla donde se le hacen reportes a los aprendices
-// Que aparezcan los reportes ya creados y la opcion de crear mas, que permita deslizar por si hay muchos
 import 'package:flutter/material.dart';
 
-class ReporteAprendizPage extends StatelessWidget {
+class ReporteAprendizPage extends StatefulWidget {
   const ReporteAprendizPage({Key? key}) : super(key: key);
+
+  @override
+  State<ReporteAprendizPage> createState() => _ReporteAprendizPageState();
+}
+
+class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<String> filteredStudents = [];
 
   final List<String> students = const [
     "Adrián Esteban Morales Pineda",
@@ -22,6 +28,28 @@ class ReporteAprendizPage extends StatelessWidget {
     "Isabella Andrea Pérez Luna",
     "Gabriel Sebastián Silva Torres",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredStudents = students;
+    _searchController.addListener(_filterStudents);
+  }
+
+  void _filterStudents() {
+    String searchTerm = _searchController.text.toLowerCase();
+    setState(() {
+      filteredStudents = students
+          .where((student) => student.toLowerCase().contains(searchTerm))
+          .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +74,7 @@ class ReporteAprendizPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Handle user navigation (mantiene la función original para el perfil)
+                    // Handle user navigation
                   },
                   child: Icon(Icons.person, size: 24, color: Colors.black),
                 ),
@@ -87,6 +115,23 @@ class ReporteAprendizPage extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Buscar aprendiz...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
             ),
 
@@ -137,9 +182,9 @@ class ReporteAprendizPage extends StatelessWidget {
                     // Student List
                     Expanded(
                       child: ListView.separated(
-                        itemCount: students.length,
-                        separatorBuilder:
-                            (context, index) => const SizedBox(height: 16),
+                        itemCount: filteredStudents.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 16),
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
@@ -156,7 +201,7 @@ class ReporteAprendizPage extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  students[index],
+                                  filteredStudents[index],
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
