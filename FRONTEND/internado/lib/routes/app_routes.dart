@@ -10,6 +10,7 @@ import '../screens/admin/aprendices_registrados/aprendiz_registrado.dart';
 import '../screens/admin/aprendices_registrados/vista_aprendiz.dart';
 import '../screens/configuracion_screen.dart';
 import '../screens/admin/permisos/permisos_solicitados.dart';
+import '../screens/admin/reportes/crear_reporte.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -28,6 +29,9 @@ class AppRoutes {
 
   // Rutas de configuración
   static const String configuracion = '/configuracion';
+
+  // Rutas de reportes
+  static const String crearReporte = '/crear-reporte';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -51,6 +55,9 @@ class AppRoutes {
 
       // Rutas de configuración
       configuracion: (context) => const ConfiguracionScreen(),
+
+      // Rutas de reportes
+      crearReporte: (context) => const ReporteAprendiz(),
     };
   }
 }

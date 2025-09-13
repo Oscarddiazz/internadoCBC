@@ -39,9 +39,10 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
   void _filterStudents() {
     String searchTerm = _searchController.text.toLowerCase();
     setState(() {
-      filteredStudents = students
-          .where((student) => student.toLowerCase().contains(searchTerm))
-          .toList();
+      filteredStudents =
+          students
+              .where((student) => student.toLowerCase().contains(searchTerm))
+              .toList();
     });
   }
 
@@ -159,7 +160,7 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Handle create new report
+                            Navigator.pushNamed(context, '/crear-reporte');
                           },
                           child: Container(
                             width: 40,
@@ -183,8 +184,8 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                     Expanded(
                       child: ListView.separated(
                         itemCount: filteredStudents.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 16),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 16),
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
