@@ -5,22 +5,33 @@ class Tarea {
   final String tareaDescripcion;
   final DateTime tareaFecEntrega;
   final int tareaAprendizId;
+  final int? tareaAdminId;
   final String? tareaEvidencia;
   final EstadoTarea tareaEstado;
   final DateTime? tareaFecCompletada;
-  final DateTime tareaFecCreacion;
+  final DateTime? tareaFecAsignacion;
   final String? tareaObservaciones;
+  // Campos adicionales del backend
+  final String? adminName;
+  final String? adminApe;
+  final String? aprendizName;
+  final String? aprendizApe;
 
   Tarea({
     this.tareaId,
     required this.tareaDescripcion,
     required this.tareaFecEntrega,
     required this.tareaAprendizId,
+    this.tareaAdminId,
     this.tareaEvidencia,
     this.tareaEstado = EstadoTarea.pendiente,
     this.tareaFecCompletada,
-    required this.tareaFecCreacion,
+    this.tareaFecAsignacion,
     this.tareaObservaciones,
+    this.adminName,
+    this.adminApe,
+    this.aprendizName,
+    this.aprendizApe,
   });
 
   factory Tarea.fromJson(Map<String, dynamic> json) {
@@ -32,17 +43,22 @@ class Tarea {
               ? DateTime.parse(json['tarea_fec_entrega'])
               : DateTime.now(),
       tareaAprendizId: json['tarea_aprendiz_id'] ?? 0,
+      tareaAdminId: json['tarea_admin_id'],
       tareaEvidencia: json['tarea_evidencia'],
       tareaEstado: _mapEstadoFromString(json['tarea_estado']),
       tareaFecCompletada:
-          json['tarea_fec_completada'] != null
-              ? DateTime.parse(json['tarea_fec_completada'])
+          json['tarea_fec_completado'] != null
+              ? DateTime.parse(json['tarea_fec_completado'])
               : null,
-      tareaFecCreacion:
-          json['tarea_fec_creacion'] != null
-              ? DateTime.parse(json['tarea_fec_creacion'])
-              : DateTime.now(),
+      tareaFecAsignacion:
+          json['tarea_fec_asignacion'] != null
+              ? DateTime.parse(json['tarea_fec_asignacion'])
+              : null,
       tareaObservaciones: json['tarea_observaciones'],
+      adminName: json['admin_name'],
+      adminApe: json['admin_ape'],
+      aprendizName: json['aprendiz_name'],
+      aprendizApe: json['aprendiz_ape'],
     );
   }
 
@@ -52,10 +68,11 @@ class Tarea {
       'tarea_descripcion': tareaDescripcion,
       'tarea_fec_entrega': tareaFecEntrega.toIso8601String(),
       'tarea_aprendiz_id': tareaAprendizId,
+      'tarea_admin_id': tareaAdminId,
       'tarea_evidencia': tareaEvidencia,
       'tarea_estado': _mapEstadoToString(tareaEstado),
-      'tarea_fec_completada': tareaFecCompletada?.toIso8601String(),
-      'tarea_fec_creacion': tareaFecCreacion.toIso8601String(),
+      'tarea_fec_completado': tareaFecCompletada?.toIso8601String(),
+      'tarea_fec_asignacion': tareaFecAsignacion?.toIso8601String(),
       'tarea_observaciones': tareaObservaciones,
     };
   }
@@ -118,22 +135,32 @@ class Tarea {
     String? tareaDescripcion,
     DateTime? tareaFecEntrega,
     int? tareaAprendizId,
+    int? tareaAdminId,
     String? tareaEvidencia,
     EstadoTarea? tareaEstado,
     DateTime? tareaFecCompletada,
-    DateTime? tareaFecCreacion,
+    DateTime? tareaFecAsignacion,
     String? tareaObservaciones,
+    String? adminName,
+    String? adminApe,
+    String? aprendizName,
+    String? aprendizApe,
   }) {
     return Tarea(
       tareaId: tareaId ?? this.tareaId,
       tareaDescripcion: tareaDescripcion ?? this.tareaDescripcion,
       tareaFecEntrega: tareaFecEntrega ?? this.tareaFecEntrega,
       tareaAprendizId: tareaAprendizId ?? this.tareaAprendizId,
+      tareaAdminId: tareaAdminId ?? this.tareaAdminId,
       tareaEvidencia: tareaEvidencia ?? this.tareaEvidencia,
       tareaEstado: tareaEstado ?? this.tareaEstado,
       tareaFecCompletada: tareaFecCompletada ?? this.tareaFecCompletada,
-      tareaFecCreacion: tareaFecCreacion ?? this.tareaFecCreacion,
+      tareaFecAsignacion: tareaFecAsignacion ?? this.tareaFecAsignacion,
       tareaObservaciones: tareaObservaciones ?? this.tareaObservaciones,
+      adminName: adminName ?? this.adminName,
+      adminApe: adminApe ?? this.adminApe,
+      aprendizName: aprendizName ?? this.aprendizName,
+      aprendizApe: aprendizApe ?? this.aprendizApe,
     );
   }
 }

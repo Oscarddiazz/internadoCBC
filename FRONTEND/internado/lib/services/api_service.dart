@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/usuario.dart';
 import '../config/app_config.dart';
 
 class ApiService {
@@ -230,6 +229,7 @@ class ApiService {
     required String descripcion,
     required String fechaEntrega,
     required int aprendizId,
+    String? estado,
   }) async {
     try {
       final response = await http.post(
@@ -239,6 +239,7 @@ class ApiService {
           'tarea_descripcion': descripcion,
           'tarea_fec_entrega': fechaEntrega,
           'tarea_aprendiz_id': aprendizId,
+          'tarea_estado': estado ?? 'Pendiente',
         }),
       );
 
@@ -398,6 +399,300 @@ class ApiService {
     } catch (e) {
       print('DEBUG: Error en API Service: $e');
       return {'success': false, 'message': 'Error de conexión: $e'};
+    }
+  }
+
+  // Actualizar tarea
+  static Future<Map<String, dynamic>> updateTask({
+    required int taskId,
+    String? descripcion,
+    String? fechaEntrega,
+    String? estado,
+    String? evidencia,
+    String? observaciones,
+  }) async {
+    try {
+      final body = <String, dynamic>{};
+      if (descripcion != null) body['tarea_descripcion'] = descripcion;
+      if (fechaEntrega != null) body['tarea_fec_entrega'] = fechaEntrega;
+      if (estado != null) body['tarea_estado'] = estado;
+      if (evidencia != null) body['tarea_evidencia'] = evidencia;
+      if (observaciones != null) body['tarea_observaciones'] = observaciones;
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/tasks/$taskId'),
+        headers: _headers,
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al actualizar tarea');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al actualizar tarea: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Eliminar tarea
+  static Future<Map<String, dynamic>> deleteTask(int taskId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/tasks/$taskId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al eliminar tarea');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al eliminar tarea: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Obtener permiso por ID
+  static Future<Map<String, dynamic>> getPermiso(int permisoId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/permissions/$permisoId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al obtener permiso');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al obtener permiso: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Responder a permiso (aprobado/rechazado)
+  static Future<Map<String, dynamic>> respondToPermiso({
+    required int permisoId,
+    required String respuesta, // 'aprobado' o 'rechazado'
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/permissions/$permisoId/respond'),
+        headers: _headers,
+        body: json.encode({'respuesta': respuesta}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al responder permiso');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al responder permiso: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Eliminar permiso
+  static Future<Map<String, dynamic>> deletePermiso(int permisoId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/permissions/$permisoId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al eliminar permiso');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al eliminar permiso: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Crear usuario (solo para administradores)
+  static Future<Map<String, dynamic>> createUser(
+    Map<String, dynamic> userData,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/users'),
+        headers: _headers,
+        body: json.encode(userData),
+      );
+
+      if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al crear usuario');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al crear usuario: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Actualizar usuario
+  static Future<Map<String, dynamic>> updateUser({
+    required int userId,
+    Map<String, dynamic>? userData,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/users/$userId'),
+        headers: _headers,
+        body: json.encode(userData ?? {}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al actualizar usuario');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al actualizar usuario: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Eliminar usuario
+  static Future<Map<String, dynamic>> deleteUser(int userId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/users/$userId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al eliminar usuario');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al eliminar usuario: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Cambiar contraseña
+  static Future<Map<String, dynamic>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/change-password'),
+        headers: _headers,
+        body: json.encode({
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al cambiar contraseña');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al cambiar contraseña: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Verificar estado del servidor
+  static Future<Map<String, dynamic>> checkServerHealth() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/health'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Servidor no disponible: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
     }
   }
 

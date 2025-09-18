@@ -30,15 +30,6 @@ class AppConfig {
   static const String authError =
       'Error de autenticación. Inicia sesión nuevamente.';
 
-  // Credenciales de prueba
-  static const Map<String, String> testCredentials = {
-    'admin': 'pedro.suarez@sena.edu.co',
-    'admin_password': 'admin123',
-    'delegado': 'juan.martinez@sena.edu.co',
-    'delegado_password': 'delegado1',
-    'aprendiz': 'carlos.gomez@sena.edu.co',
-    'aprendiz_password': 'aprendiz1',
-  };
 
   // Método para obtener información de la plataforma actual
   static String get platformInfo {

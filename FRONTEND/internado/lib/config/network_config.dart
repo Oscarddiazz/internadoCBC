@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class NetworkConfig {
-  // IP local configurable
+  // IP local configurable - Cambiar según tu red local
   static String _localIP = '192.168.1.100';
   static int _port = 3000;
 

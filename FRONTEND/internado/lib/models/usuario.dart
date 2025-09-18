@@ -56,21 +56,11 @@ class Usuario {
       userEmail: json['user_email'],
       userTel: json['user_tel'],
       userPass: json['user_pass'],
-      userRol: RolType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['user_rol'],
-      ),
-      userDiscap: DiscapacidadType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['user_discap'],
-      ),
-      etpFormApr: EtapaType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['etp_form_Apr'],
-      ),
-      userGen: GeneroType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['user_gen'],
-      ),
-      userEtn: EtniaType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['user_etn'],
-      ),
+      userRol: _mapRolFromString(json['user_rol']),
+      userDiscap: _mapDiscapacidadFromString(json['user_discap']),
+      etpFormApr: _mapEtapaFromString(json['etp_form_Apr']),
+      userGen: _mapGeneroFromString(json['user_gen']),
+      userEtn: _mapEtniaFromString(json['user_etn']),
       userImg: json['user_img'],
       fecIniFormApr: DateTime.parse(json['fec_ini_form_Apr']),
       fecFinFormApr: DateTime.parse(json['fec_fin_form_Apr']),
@@ -102,5 +92,67 @@ class Usuario {
       'ficha_Apr': fichaApr,
       'fec_registro': fecRegistro?.toIso8601String(),
     };
+  }
+
+  // Métodos de mapeo para enums
+  static RolType _mapRolFromString(String? rol) {
+    switch (rol?.toLowerCase()) {
+      case 'administrador':
+        return RolType.administrador;
+      case 'delegado':
+        return RolType.delegado;
+      case 'aprendiz':
+        return RolType.aprendiz;
+      default:
+        return RolType.aprendiz;
+    }
+  }
+
+  static DiscapacidadType _mapDiscapacidadFromString(String? discap) {
+    switch (discap?.toLowerCase()) {
+      case 'visual':
+        return DiscapacidadType.visual;
+      case 'auditiva':
+        return DiscapacidadType.auditiva;
+      case 'fisica':
+        return DiscapacidadType.fisica;
+      case 'ninguna':
+      default:
+        return DiscapacidadType.ninguna;
+    }
+  }
+
+  static EtapaType _mapEtapaFromString(String? etapa) {
+    switch (etapa?.toLowerCase()) {
+      case 'lectiva':
+        return EtapaType.lectiva;
+      case 'productiva':
+        return EtapaType.productiva;
+      default:
+        return EtapaType.lectiva;
+    }
+  }
+
+  static GeneroType _mapGeneroFromString(String? genero) {
+    switch (genero?.toLowerCase()) {
+      case 'masculino':
+        return GeneroType.masculino;
+      case 'femenino':
+        return GeneroType.femenino;
+      default:
+        return GeneroType.masculino;
+    }
+  }
+
+  static EtniaType _mapEtniaFromString(String? etnia) {
+    switch (etnia?.toLowerCase()) {
+      case 'indigena':
+        return EtniaType.indigina;
+      case 'afrodescendiente':
+        return EtniaType.afrodescendiente;
+      case 'no aplica':
+      default:
+        return EtniaType.noAplica;
+    }
   }
 }
