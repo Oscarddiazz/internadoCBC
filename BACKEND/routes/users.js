@@ -5,7 +5,8 @@ const {
   getUserById, 
   createUser, 
   updateUser, 
-  deleteUser 
+  deleteUser,
+  changeUserRole
 } = require('../controllers/userController');
 const { authenticateToken, isAdmin } = require('../middleware/auth');
 
@@ -17,6 +18,7 @@ router.get('/', isAdmin, getAllUsers);
 router.get('/:id', isAdmin, getUserById);
 router.post('/', isAdmin, createUser);
 router.put('/:id', isAdmin, updateUser);
+router.put('/:id/role', isAdmin, changeUserRole);
 router.delete('/:id', isAdmin, deleteUser);
 
 module.exports = router;

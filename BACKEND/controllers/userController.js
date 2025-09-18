@@ -304,6 +304,88 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Cambiar rol de usuario (solo administradores)
+const changeUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user_rol } = req.body;
+    const adminId = req.user.user_id;
+
+    // Verificar que el usuario que hace la petición es administrador
+    if (req.user.user_rol !== 'Administrador') {
+      return res.status(403).json({
+        success: false,
+        message: 'Solo los administradores pueden cambiar roles'
+      });
+    }
+
+    // Validar rol
+    const validRoles = ['Administrador', 'Delegado', 'Aprendiz'];
+    if (!user_rol || !validRoles.includes(user_rol)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rol inválido. Los roles válidos son: Administrador, Delegado, Aprendiz'
+      });
+    }
+
+    // Verificar que no se puede cambiar su propio rol
+    if (parseInt(id) === adminId) {
+      return res.status(400).json({
+        success: false,
+        message: 'No puedes cambiar tu propio rol'
+      });
+    }
+
+    // Verificar si el usuario existe
+    const existingUser = await executeQuery(
+      'SELECT user_id, user_rol FROM usuario WHERE user_id = ?',
+      [id]
+    );
+
+    if (existingUser.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+
+    const currentRole = existingUser[0].user_rol;
+
+    // Verificar que no se esté cambiando a un rol superior
+    if (currentRole === 'Administrador' && user_rol !== 'Administrador') {
+      return res.status(400).json({
+        success: false,
+        message: 'No puedes degradar a otro administrador'
+      });
+    }
+
+    // Actualizar rol
+    await executeQuery(
+      'UPDATE usuario SET user_rol = ? WHERE user_id = ?',
+      [user_rol, id]
+    );
+
+    // Obtener el usuario actualizado
+    const updatedUser = await executeQuery(
+      'SELECT user_id, user_num_ident, user_name, user_ape, user_email, user_rol FROM usuario WHERE user_id = ?',
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: `Rol cambiado de ${currentRole} a ${user_rol} exitosamente`,
+      data: updatedUser[0]
+    });
+
+  } catch (error) {
+    console.error('Error cambiando rol:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+};
+
 // Eliminar usuario
 const deleteUser = async (req, res) => {
   try {
@@ -344,5 +426,6 @@ module.exports = {
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  changeUserRole
 };

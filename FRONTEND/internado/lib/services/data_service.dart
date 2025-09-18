@@ -93,6 +93,25 @@ class DataService {
     }
   }
 
+  /// Cambiar rol de usuario (solo administradores)
+  static Future<Usuario> changeUserRole({
+    required int userId,
+    required String newRole,
+  }) async {
+    try {
+      final result = await ApiService.changeUserRole(
+        userId: userId,
+        newRole: newRole,
+      );
+      if (result['success']) {
+        return Usuario.fromJson(result['data']);
+      }
+      throw Exception(result['message'] ?? 'Error al cambiar rol');
+    } catch (e) {
+      throw Exception('Error cambiando rol: $e');
+    }
+  }
+
   /// Eliminar usuario
   static Future<bool> deleteUser(int userId) async {
     try {

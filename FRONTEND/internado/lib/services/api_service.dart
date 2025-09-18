@@ -644,6 +644,37 @@ class ApiService {
     }
   }
 
+  // Cambiar rol de usuario (solo administradores)
+  static Future<Map<String, dynamic>> changeUserRole({
+    required int userId,
+    required String newRole,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/users/$userId/role'),
+        headers: _headers,
+        body: json.encode({'user_rol': newRole}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al cambiar rol');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al cambiar rol: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
   // Cambiar contraseña
   static Future<Map<String, dynamic>> changePassword({
     required String currentPassword,
