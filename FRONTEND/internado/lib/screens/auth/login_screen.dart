@@ -229,20 +229,24 @@ class _LoginScreenState extends State<LoginScreen>
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
             ),
-            child: _isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF2E7D32),
+            child:
+                _isLoading
+                    ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF2E7D32),
+                        ),
+                      ),
+                    )
+                    : const Text(
+                      'Iniciar Sesion',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  )
-                : const Text(
-                    'Iniciar Sesion',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
           ),
         ),
       ],
@@ -311,22 +315,23 @@ class _LoginScreenState extends State<LoginScreen>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _isNavigating
-                  ? null
-                  : () {
-                      if (!_isNavigating) {
-                        setState(() {
-                          _isNavigating = true;
-                        });
-                        Navigator.pushNamed(context, '/register').then((_) {
-                          if (mounted) {
-                            setState(() {
-                              _isNavigating = false;
-                            });
-                          }
-                        });
-                      }
-                    },
+              onPressed:
+                  _isNavigating
+                      ? null
+                      : () {
+                        if (!_isNavigating) {
+                          setState(() {
+                            _isNavigating = true;
+                          });
+                          Navigator.pushNamed(context, '/register').then((_) {
+                            if (mounted) {
+                              setState(() {
+                                _isNavigating = false;
+                              });
+                            }
+                          });
+                        }
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE8F5E8),
                 foregroundColor: const Color(0xFF2E7D32),
@@ -414,12 +419,13 @@ class _LoginScreenState extends State<LoginScreen>
                 vertical: 16,
               ),
             ),
-            items: options.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList(),
+            items:
+                options.map((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
             onChanged: (String? newValue) {},
             hint: const Text('Seleccionar'),
           ),
