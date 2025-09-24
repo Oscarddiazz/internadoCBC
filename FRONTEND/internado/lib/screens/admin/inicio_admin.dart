@@ -4,8 +4,15 @@ import 'documentos/vista_documentos.dart';
 import 'reportes/reporte_general.dart';
 import 'reportes/reporte_aprendiz.dart';
 
-class AdminDashboard extends StatelessWidget {
+class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
+
+  @override
+  State<AdminDashboard> createState() => _AdminDashboardState();
+}
+
+class _AdminDashboardState extends State<AdminDashboard> {
+  int _selectedIndex = 0;
 
   void _mostrarOpcionesDocumentos(BuildContext context) {
     showDialog(
@@ -109,6 +116,12 @@ class AdminDashboard extends StatelessWidget {
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/notificaciones');
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -225,12 +238,16 @@ class AdminDashboard extends StatelessWidget {
         elevation: 0,
         currentIndex: _selectedIndex,
         onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
           // Navegación según el índice seleccionado
           switch (index) {
             case 0: // Home
               Navigator.pushReplacementNamed(context, '/admin-dashboard');
               break;
-            case 1: // Perfil (ya estamos aquí)
+            case 1: // Perfil
+              Navigator.pushNamed(context, '/perfil');
               break;
             case 2: // Configuración
               Navigator.pushNamed(context, '/configuracion');
@@ -249,9 +266,6 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 }
-
-// Variables para el BottomNavigationBar
-int _selectedIndex = 0; // Variable para controlar el índice seleccionado
 
 class CircularButton extends StatelessWidget {
   final Color color;

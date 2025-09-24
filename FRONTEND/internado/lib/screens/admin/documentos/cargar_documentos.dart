@@ -183,11 +183,16 @@ class _CargarDocumentosState extends State<CargarDocumentos> {
         currentIndex: _selectedIndex,
         onTap: (index) {
           // Navegación según el índice seleccionado
+          setState(() {
+            _selectedIndex = index;
+          });
+          // Navegación según el índice seleccionado
           switch (index) {
             case 0: // Home
               Navigator.pushReplacementNamed(context, '/admin-dashboard');
               break;
-            case 1: // Perfil (ya estamos aquí)
+            case 1: // Perfil
+              Navigator.pushNamed(context, '/perfil');
               break;
             case 2: // Configuración
               Navigator.pushNamed(context, '/configuracion');
