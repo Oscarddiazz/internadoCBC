@@ -301,7 +301,7 @@ class _ReporteGeneralState extends State<ReporteGeneral> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Handle user navigation
+                    Navigator.pushNamed(context, '/perfil');
                   },
                   child: Icon(Icons.person, size: 24, color: Colors.black),
                 ),

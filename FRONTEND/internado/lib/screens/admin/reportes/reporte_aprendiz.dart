@@ -75,7 +75,7 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Handle user navigation
+                    Navigator.pushNamed(context, '/perfil');
                   },
                   child: Icon(Icons.person, size: 24, color: Colors.black),
                 ),

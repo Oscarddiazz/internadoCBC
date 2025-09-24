@@ -11,6 +11,8 @@ import '../screens/admin/aprendices_registrados/vista_aprendiz.dart';
 import '../screens/configuracion_screen.dart';
 import '../screens/admin/permisos/permisos_solicitados.dart';
 import '../screens/admin/reportes/crear_reporte.dart';
+import '../screens/perfil_screen.dart';
+import '../screens/nortificaciones_screen.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -29,6 +31,8 @@ class AppRoutes {
 
   // Rutas de configuración
   static const String configuracion = '/configuracion';
+  static const String perfil = '/perfil';
+  static const String notificaciones = '/notificaciones';
 
   // Rutas de reportes
   static const String crearReporte = '/crear-reporte';
@@ -55,6 +59,8 @@ class AppRoutes {
 
       // Rutas de configuración
       configuracion: (context) => const ConfiguracionScreen(),
+      perfil: (context) => const ProfilePage(),
+      notificaciones: (context) => const NotificationsPage(),
 
       // Rutas de reportes
       crearReporte: (context) => const ReporteAprendiz(),

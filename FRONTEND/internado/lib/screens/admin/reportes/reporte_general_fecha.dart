@@ -362,7 +362,12 @@ class _ReporteGeneralFechaState extends State<ReporteGeneralFecha> {
                 },
                 child: const Icon(Icons.home, size: 24, color: Colors.black),
               ),
-              const Icon(Icons.person, size: 24, color: Colors.black),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/perfil');
+                },
+                child: const Icon(Icons.person, size: 24, color: Colors.black),
+              ),
               GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/configuracion');
