@@ -45,7 +45,7 @@ class AppRoutes {
       login: (context) => const LoginScreen(),
       register: (context) => const RegisterScreen(),
       registerStep2: (context) => const RegisterStep2Screen(),
-      home: (context) => const HomeScreen(),
+      home: (context) => const InicioAprendiz(),
 
       // Rutas de administrador
       adminDashboard: (context) => AdminDashboard(),

@@ -1,57 +1,140 @@
 import 'package:flutter/material.dart';
+import 'generar_permiso/generar_permiso.dart';
+import 'casino/casino.dart';
+import 'tareas_dirigidas/tareas_dirigidas.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class InicioAprendiz extends StatefulWidget {
+  const InicioAprendiz({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<InicioAprendiz> createState() => _InicioAprendizState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _InicioAprendizState extends State<InicioAprendiz> {
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BioHub'),
+        title: const Text('Inicio Aprendiz'),
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              Navigator.pushNamed(context, '/notificaciones');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.pushNamed(context, '/configuracion');
-            },
-          ),
-        ],
+        actions: const [Icon(Icons.settings)],
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.home, size: 100, color: Color(0xFF2E7D32)),
-            SizedBox(height: 20),
-            Text(
-              '¡Bienvenido a BioHub!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2E7D32),
+      backgroundColor: const Color(0xFFF6FBE4),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Viernes 9 de Agosto del 2025',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Buenos días, Aprendiz',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: const [
+                      Icon(Icons.search, size: 24),
+                      SizedBox(width: 16),
+                      Icon(Icons.notifications_outlined, size: 24),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Sistema de Gestión de Internado',
-              style: TextStyle(fontSize: 16, color: Color(0xFF2E7D32)),
-            ),
-          ],
+
+              // Botones circulares
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CircularButton(
+                            color: const Color(0xFFFFE196),
+                            text: 'Generar\nPermisos',
+                            size: 140,
+                            onTap: () {
+                              // 🔹 Aquí redirige a ProyectoInfoPage
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const GenerarPermisoPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          CircularButton(
+                            color: const Color(0xFF69B840),
+                            text: 'Casino',
+                            size: 140,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const CasinoPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CircularButton(
+                            color: const Color(0xFFCC7766),
+                            text: 'Tareas Dirigidas',
+                            size: 140,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const TareasDirigidasPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          CircularButton(
+                            color: const Color(0xFF879D9A),
+                            text: 'Reportes',
+                            size: 140,
+                            onTap: () {
+                              Navigator.pushNamed(context, '/reportes');
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -62,12 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _selectedIndex = index;
           });
-          // Navegación según el índice seleccionado
+
+          // 🔹 Navegación inferior
           switch (index) {
-            case 0: // Home (ya estamos aquí)
+            case 0: // Home
+              Navigator.pushReplacementNamed(context, '/inicio-aprendiz');
               break;
             case 1: // Perfil
-              Navigator.pushNamed(context, '/perfil');
+              Navigator.pushNamed(context, '/perfil-aprendiz');
               break;
             case 2: // Configuración
               Navigator.pushNamed(context, '/configuracion');
@@ -82,6 +167,44 @@ class _HomeScreenState extends State<HomeScreen> {
             label: '',
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CircularButton extends StatelessWidget {
+  final Color color;
+  final String text;
+  final double size;
+  final VoidCallback? onTap;
+
+  const CircularButton({
+    super.key,
+    required this.color,
+    required this.text,
+    required this.size,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }
