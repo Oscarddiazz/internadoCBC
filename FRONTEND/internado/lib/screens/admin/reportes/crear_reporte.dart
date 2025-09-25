@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ReporteAprendiz extends StatefulWidget {
-  const ReporteAprendiz({Key? key}) : super(key: key);
+  const ReporteAprendiz({super.key});
 
   @override
   State<ReporteAprendiz> createState() => _ReporteAprendizState();
@@ -18,11 +18,6 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
       TextEditingController();
   final TextEditingController _advertenciasSancionesController =
       TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -57,7 +52,7 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Text(
+                const Text(
                   'Reporte Aprendiz',
                   style: TextStyle(
                     fontSize: 20,
@@ -67,7 +62,9 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
                 ),
               ],
             ),
-          ), // Main Content
+          ),
+
+          // Main Content
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -181,12 +178,8 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
                                         const SizedBox(height: 24),
                                         ElevatedButton(
                                           onPressed: () {
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close dialog
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Return to previous screen
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.green,
@@ -218,7 +211,7 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
 
                     const SizedBox(height: 24),
 
-                    // Student Information
+                    // Informacion del Aprendiz
                     _buildFormField(
                       'Nombre:',
                       _nombreController,
@@ -242,8 +235,8 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
 
                     const SizedBox(height: 32),
 
-                    // Incident Details
-                    Text(
+                    // Detalles del incidente
+                    const Text(
                       'Detalles del incidente',
                       style: TextStyle(
                         fontSize: 18,
@@ -260,8 +253,8 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
 
                     const SizedBox(height: 24),
 
-                    // Warnings and Sanctions
-                    Text(
+                    // Sanciones o Avertencias
+                    const Text(
                       'Advertencias y Sanciones',
                       style: TextStyle(
                         fontSize: 18,
@@ -320,6 +313,8 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
       ),
     );
   }
+
+  // Helper Methods
 
   Widget _buildFormField(
     String label,
@@ -407,6 +402,7 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2101),
                 );
+
                 if (pickedDate != null) {
                   controller.text =
                       '${pickedDate.day.toString().padLeft(2, '0')}/'
@@ -460,6 +456,7 @@ class _ReporteAprendizState extends State<ReporteAprendiz> {
                   context: context,
                   initialTime: TimeOfDay.now(),
                 );
+
                 if (pickedTime != null) {
                   controller.text =
                       '${pickedTime.hour.toString().padLeft(2, '0')}:'
