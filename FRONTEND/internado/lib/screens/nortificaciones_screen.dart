@@ -1,60 +1,85 @@
 import 'package:flutter/material.dart';
 
-class NotificationsPage extends StatelessWidget {
+class NotificationsPage extends StatefulWidget {
   const NotificationsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> notifications = [
-      {
-        'id': 1,
-        'title': 'Solicitud de Permiso',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-      {
-        'id': 2,
-        'title': 'Tarea Dirigida Completa',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-      {
-        'id': 3,
-        'title': 'Nuevo Aprendiz Registrado',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-      {
-        'id': 4,
-        'title': 'Solicitud de Permiso',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-      {
-        'id': 5,
-        'title': 'Solicitud de Permiso',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-      {
-        'id': 6,
-        'title': 'Solicitud de Permiso',
-        'user': 'Juan Camilo Andres Hernandez',
-        'time': 'Ahora mismo',
-      },
-    ];
+  State<NotificationsPage> createState() => _NotificationsPageState();
+}
 
+class _NotificationsPageState extends State<NotificationsPage> {
+  List<Map<String, dynamic>> notifications = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Por ahora usamos datos mock, pero se puede conectar a un endpoint de notificaciones
+      // final res = await ApiService.getNotifications();
+      
+      // Simulamos carga de notificaciones
+      await Future.delayed(const Duration(seconds: 1));
+      
+      setState(() {
+        notifications = [
+          {
+            'id': 1,
+            'title': 'Solicitud de Permiso',
+            'user': 'Sistema',
+            'time': 'Hace 5 minutos',
+            'type': 'permiso',
+          },
+          {
+            'id': 2,
+            'title': 'Tarea Dirigida Asignada',
+            'user': 'Administrador',
+            'time': 'Hace 1 hora',
+            'type': 'tarea',
+          },
+          {
+            'id': 3,
+            'title': 'Permiso Aprobado',
+            'user': 'Administrador',
+            'time': 'Hace 2 horas',
+            'type': 'permiso',
+          },
+        ];
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error al cargar notificaciones: $e';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff0f4d3), // bg-[#f0f4d3]
+      backgroundColor: const Color(0xfff0f4d3),
       body: Column(
         children: [
           // Header
           Container(
-            color: Colors.white, // bg-white
+            color: Colors.white,
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
-            ), // px-4 py-4
+            ),
             child: SafeArea(
               bottom: false,
               child: Row(
@@ -62,18 +87,18 @@ class NotificationsPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: const Icon(
-                      Icons.chevron_left, // ChevronLeft icon
-                      size: 24, // w-6 h-6
-                      color: Colors.black, // text-black
+                      Icons.chevron_left,
+                      size: 24,
+                      color: Colors.black,
                     ),
                   ),
-                  const SizedBox(width: 12), // mr-3
+                  const SizedBox(width: 12),
                   const Text(
                     'Notificaciones',
                     style: TextStyle(
-                      color: Colors.black, // text-black
-                      fontSize: 20, // text-xl
-                      fontWeight: FontWeight.bold, // font-bold
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -87,68 +112,137 @@ class NotificationsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 24,
-              ), // px-4 py-6
-              child: ListView.separated(
-                itemCount: notifications.length,
-                separatorBuilder:
-                    (context, index) => const SizedBox(height: 24), // space-y-6
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // items-start
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 48, // w-12
-                        height: 48, // h-12
-                        decoration: const BoxDecoration(
-                          color: Color(0xffc4c4c4), // bg-[#c4c4c4]
-                          shape: BoxShape.circle, // rounded-full
-                        ),
-                      ),
-                      const SizedBox(width: 16), // gap-4
-                      // Content
-                      Expanded(
-                        // flex-1 min-w-0
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              notification['title'],
-                              style: const TextStyle(
-                                color: Colors.black, // text-black
-                                fontSize: 18, // text-lg
-                                fontWeight: FontWeight.w600, // font-semibold
-                                height: 1.2, // leading-tight
-                              ),
-                            ),
-                            const SizedBox(height: 4), // mb-1
-                            Text(
-                              notification['user'],
-                              style: const TextStyle(
-                                color: Color(0xff374151), // text-gray-700
-                                fontSize: 14, // text-sm
-                              ),
-                            ),
-                            const SizedBox(height: 2), // mb-0.5
-                            Text(
-                              notification['time'],
-                              style: const TextStyle(
-                                color: Color(0xff374151), // text-gray-700
-                                fontSize: 14, // text-sm
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
               ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _errorMessage!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _loadNotifications,
+                                child: const Text('Reintentar'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _loadNotifications,
+                          child: ListView.separated(
+                            itemCount: notifications.length,
+                            separatorBuilder: (context, index) => const SizedBox(height: 24),
+                            itemBuilder: (context, index) {
+                              final notification = notifications[index];
+                              return Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Avatar con icono según tipo
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        color: _getNotificationColor(notification['type']),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        _getNotificationIcon(notification['type']),
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    // Content
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            notification['title'],
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.2,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            notification['user'],
+                                            style: const TextStyle(
+                                              color: Color(0xff374151),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            notification['time'],
+                                            style: const TextStyle(
+                                              color: Color(0xff374151),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Color _getNotificationColor(String type) {
+    switch (type) {
+      case 'permiso':
+        return Colors.blue;
+      case 'tarea':
+        return Colors.green;
+      case 'sistema':
+        return Colors.orange;
+      default:
+        return const Color(0xffc4c4c4);
+    }
+  }
+
+  IconData _getNotificationIcon(String type) {
+    switch (type) {
+      case 'permiso':
+        return Icons.assignment;
+      case 'tarea':
+        return Icons.task;
+      case 'sistema':
+        return Icons.notifications;
+      default:
+        return Icons.info;
+    }
   }
 }

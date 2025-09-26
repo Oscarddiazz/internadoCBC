@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../services/api_service.dart';
 import 'detalle_tarea.dart'; // 👈 Importa la otra página
 
 class TareasDirigidasPage extends StatefulWidget {
@@ -9,70 +10,92 @@ class TareasDirigidasPage extends StatefulWidget {
 }
 
 class _TareasDirigidasPageState extends State<TareasDirigidasPage> {
-  List<Map<String, dynamic>> tasks = [
-    {
-      "id": 1,
-      "name": "Barrer Ambiente A",
-      "color": const Color(0xFF22FB00),
-      "hora": "08:30 AM",
-    },
-    {
-      "id": 2,
-      "name": "Limpieza de Habitación",
-      "color": const Color(0xFFFB0000),
-      "hora": "09:15 AM",
-    },
-    {
-      "id": 3,
-      "name": "Limpiar mesas Casino",
-      "color": const Color(0xFFFADD00),
-      "hora": "12:00 PM",
-    },
-    {
-      "id": 4,
-      "name": "XXXXXXXXXXXX",
-      "color": const Color(0xFF22FB00),
-      "hora": "01:45 PM",
-    },
-    {
-      "id": 5,
-      "name": "XXXXXXXXXXXX",
-      "color": const Color(0xFF22FB00),
-      "hora": "02:10 PM",
-    },
-    {
-      "id": 6,
-      "name": "XXXXXXXXXXXX",
-      "color": const Color(0xFF22FB00),
-      "hora": "03:20 PM",
-    },
-    {
-      "id": 7,
-      "name": "XXXXXXXXXXXX",
-      "color": const Color(0xFF22FB00),
-      "hora": "04:05 PM",
-    },
-  ];
-
+  List<Map<String, dynamic>> tasks = [];
+  bool _isLoading = false;
+  String? _errorMessage;
   String filtro = "pedido"; // pedido (default) o nombre
+  Map<String, dynamic>? _userProfile;
 
-  // 🔹 Datos de ejemplo del aprendiz
-  final Map<String, String> aprendiz = {
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "documento": "CC 123456789",
-    "correo": "juan.perez@example.com",
-    "telefono": "+57 300 123 4567",
-  };
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final res = await ApiService.getProfile();
+      if (res['success'] == true) {
+        setState(() {
+          _userProfile = res['data'];
+        });
+        // Cargar tareas después de obtener el perfil
+        _fetchTareas();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar perfil: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _fetchTareas() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      // Solo obtener tareas del aprendiz autenticado
+      final res = await ApiService.getTareasByAprendiz(_userProfile?['user_id'] ?? 0);
+      final List<dynamic> data = res['data'] ?? [];
+      final mapped = data.map<Map<String, dynamic>>((t) {
+        return {
+          'id': t['tarea_id'],
+          'name': t['tarea_descripcion'] ?? 'Tarea',
+          // Colorear por estado
+          'color': _colorForEstado((t['tarea_estado'] ?? 'Pendiente').toString()),
+          'hora': (t['tarea_fec_entrega'] ?? '').toString(),
+          'raw': t,
+        };
+      }).toList();
+      setState(() {
+        tasks = mapped;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'No se pudieron cargar las tareas: $e';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Color _colorForEstado(String estado) {
+    switch (estado.toLowerCase()) {
+      case 'completada':
+        return const Color(0xFF22FB00);
+      case 'en progreso':
+        return const Color(0xFFFADD00);
+      case 'pendiente':
+      default:
+        return const Color(0xFFFB0000);
+    }
+  }
 
   void _aplicarFiltro(String nuevoFiltro) {
     setState(() {
       filtro = nuevoFiltro;
-
       if (filtro == "nombre") {
         tasks.sort((a, b) => a["name"].compareTo(b["name"]));
       } else {
-        tasks.sort((a, b) => a["id"].compareTo(b["id"])); // orden original
+        tasks.sort((a, b) => (a["id"] as int).compareTo(b["id"] as int));
       }
     });
   }
@@ -130,16 +153,18 @@ class _TareasDirigidasPageState extends State<TareasDirigidasPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${aprendiz['nombre']} ${aprendiz['apellido']}",
+                    _userProfile != null 
+                        ? "${_userProfile!['user_name']} ${_userProfile!['user_ape']}"
+                        : "Cargando...",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text("📄 Documento: ${aprendiz['documento']}"),
-                  Text("📧 Correo: ${aprendiz['correo']}"),
-                  Text("📞 Teléfono: ${aprendiz['telefono']}"),
+                  Text("📄 Documento: ${_userProfile?['user_num_ident'] ?? 'Cargando...'}"),
+                  Text("📧 Correo: ${_userProfile?['user_email'] ?? 'Cargando...'}"),
+                  Text("📞 Teléfono: ${_userProfile?['user_tel'] ?? 'Cargando...'}"),
                 ],
               ),
             ),
@@ -180,72 +205,127 @@ class _TareasDirigidasPageState extends State<TareasDirigidasPage> {
                     const SizedBox(height: 20),
                     // Lista de tareas
                     Expanded(
-                      child: ListView.separated(
-                        itemCount: tasks.length,
-                        separatorBuilder:
-                            (context, index) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final task = tasks[index];
-                          return GestureDetector(
-                            onTap: () {
-                              // 👉 Abrir página de detalles
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => DetalleTareaPage(
-                                        nombre: task["name"],
-                                        hora: task["hora"],
-                                      ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 16,
-                                        height: 16,
-                                        decoration: BoxDecoration(
-                                          color: task["color"],
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        task["name"],
+                      child: RefreshIndicator(
+                        onRefresh: _fetchTareas,
+                        child: _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : _errorMessage != null
+                                ? Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Text(
+                                        _errorMessage!,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red,
+                                          fontSize: 14,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  Text(
-                                    task["hora"],
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                      fontStyle: FontStyle.italic,
                                     ),
+                                  )
+                                : tasks.isEmpty
+                                    ? const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(20.0),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.assignment_outlined,
+                                                size: 64,
+                                                color: Colors.grey,
+                                              ),
+                                              SizedBox(height: 16),
+                                              Text(
+                                                "No tienes tareas asignadas",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                "Las tareas aparecerán aquí cuando te sean asignadas",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : ListView.separated(
+                                        itemCount: tasks.length,
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(height: 12),
+                                        itemBuilder: (context, index) {
+                                      final task = tasks[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetalleTareaPage(
+                                                taskId: task["id"] as int,
+                                                nombre: task["name"],
+                                                hora: task["hora"],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 14,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 16,
+                                                    height: 16,
+                                                    decoration: BoxDecoration(
+                                                      color: task["color"],
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  Text(
+                                                    task["name"],
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(
+                                                task["hora"],
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black54,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
                       ),
                     ),
                   ],

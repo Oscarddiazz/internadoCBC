@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../../../services/api_service.dart';
 
 class VistaPermiso extends StatefulWidget {
+  final int permisoId;
   final Map<String, String> solicitud;
 
-  const VistaPermiso({Key? key, required this.solicitud}) : super(key: key);
+  const VistaPermiso({Key? key, required this.permisoId, required this.solicitud}) : super(key: key);
 
   @override
   State<VistaPermiso> createState() => _VistaPermisoState();
@@ -39,7 +41,7 @@ class _VistaPermisoState extends State<VistaPermiso> {
     }
   }
 
-  void _enviar() {
+  Future<void> _enviar() async {
     if (estado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -50,20 +52,42 @@ class _VistaPermisoState extends State<VistaPermiso> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Solicitud ${estado!.toUpperCase()}.\n"
-          "Razón: ${widget.solicitud['razon']}\n"
-          "Evidencia: ${evidencia ?? "No adjunta"}\n"
-          "Firma: ${firmaImg != null ? "Sí" : "No"}",
-        ),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 4),
-      ),
-    );
+    try {
+      final res = await ApiService.respondToPermiso(
+        permisoId: widget.permisoId,
+        respuesta: estado!.toLowerCase(),
+      );
 
-    Navigator.pop(context);
+      if (res['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Solicitud ${estado!.toUpperCase()}.\n"
+              "Razón: ${widget.solicitud['razon']}\n"
+              "Evidencia: ${evidencia ?? "No adjunta"}\n"
+              "Firma: ${firmaImg != null ? "Sí" : "No"}",
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(res['message'] ?? 'Error al responder permiso'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

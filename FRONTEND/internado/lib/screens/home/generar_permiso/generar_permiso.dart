@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../../services/api_service.dart';
 
 class GenerarPermisoPage extends StatefulWidget {
   const GenerarPermisoPage({super.key});
@@ -11,6 +12,32 @@ class GenerarPermisoPage extends StatefulWidget {
 class _GenerarPermisoPageState extends State<GenerarPermisoPage> {
   final TextEditingController motivoController = TextEditingController();
   String? archivoAdjunto; // Guardar nombre del archivo
+  bool _isLoading = false;
+  Map<String, dynamic>? _userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final res = await ApiService.getProfile();
+      if (res['success'] == true) {
+        setState(() {
+          _userProfile = res['data'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar perfil: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   Future<void> _adjuntarArchivo() async {
     final result = await FilePicker.platform.pickFiles(
@@ -25,27 +52,70 @@ class _GenerarPermisoPageState extends State<GenerarPermisoPage> {
     }
   }
 
-  void _enviarSolicitud() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
+  Future<void> _enviarSolicitud() async {
+    final motivo = motivoController.text.trim();
+    if (motivo.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor ingresa el motivo del permiso'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final res = await ApiService.createPermiso(
+        motivo: motivo,
+        evidencia: archivoAdjunto,
+      );
+
+      if (res['success'] == true) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            title: const Text("✅ Solicitud Enviada"),
-            content: const Text("Su solicitud ha sido enviada exitosamente."),
+            title: const Text('✅ Solicitud Enviada'),
+            content: Text(res['message'] ?? 'Solicitud enviada exitosamente.'),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Cierra el diálogo
-                  Navigator.pop(context); // Regresa a la página principal
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
-                child: const Text("Aceptar"),
+                child: const Text('Aceptar'),
               ),
             ],
           ),
-    );
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(res['message'] ?? 'Error al crear permiso'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -85,27 +155,30 @@ class _GenerarPermisoPageState extends State<GenerarPermisoPage> {
                   // Datos del aprendiz
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        "👤 Nombres y Apellidos: Camilo Andrez Hernandez",
-                        style: TextStyle(fontSize: 16),
+                        "👤 Nombres y Apellidos: ${_userProfile != null ? '${_userProfile!['user_name']} ${_userProfile!['user_ape']}' : 'Cargando...'}",
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
-                        "🆔 C.C: 1065433322",
-                        style: TextStyle(fontSize: 16),
+                        "🆔 C.C: ${_userProfile?['user_num_ident'] ?? 'Cargando...'}",
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      SizedBox(height: 6),
-                      Text("📌 Ficha: 2877051", style: TextStyle(fontSize: 16)),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
-                        "📅 Desde: 28/09/2024",
-                        style: TextStyle(fontSize: 16),
+                        "📌 Ficha: ${_userProfile?['ficha_Apr'] ?? 'Cargando...'}", 
+                        style: const TextStyle(fontSize: 16)
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
-                        "📅 Hasta: 30/09/2024",
-                        style: TextStyle(fontSize: 16),
+                        "📅 Desde: ${_userProfile?['fec_ini_form_Apr'] ?? 'Cargando...'}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "📅 Hasta: ${_userProfile?['fec_fin_form_Apr'] ?? 'Cargando...'}",
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
@@ -169,7 +242,7 @@ class _GenerarPermisoPageState extends State<GenerarPermisoPage> {
 
                   // Botón enviar
                   ElevatedButton(
-                    onPressed: _enviarSolicitud,
+                    onPressed: _isLoading ? null : _enviarSolicitud,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[700],
                       foregroundColor: Colors.white,
@@ -182,13 +255,24 @@ class _GenerarPermisoPageState extends State<GenerarPermisoPage> {
                       ),
                       elevation: 4,
                     ),
-                    child: const Text(
-                      "Enviar",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text(
+                            "Enviar",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ],
               ),

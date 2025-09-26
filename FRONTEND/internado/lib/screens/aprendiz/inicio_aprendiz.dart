@@ -1,7 +1,45 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
-class InicioAprendiz extends StatelessWidget {
+class InicioAprendiz extends StatefulWidget {
   const InicioAprendiz({super.key});
+
+  @override
+  State<InicioAprendiz> createState() => _InicioAprendizState();
+}
+
+class _InicioAprendizState extends State<InicioAprendiz> {
+  Map<String, dynamic>? _userProfile;
+  bool _isLoading = true;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final res = await ApiService.getProfile();
+      if (res['success'] == true) {
+        setState(() {
+          _userProfile = res['data'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar perfil: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +69,11 @@ class InicioAprendiz extends StatelessWidget {
                         style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Buenos días, Aprendiz',
-                        style: TextStyle(
+                      Text(
+                        _isLoading 
+                            ? 'Cargando...'
+                            : 'Buenos días, ${_userProfile?['user_name'] ?? 'Aprendiz'}',
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -114,7 +154,21 @@ class InicioAprendiz extends StatelessWidget {
         elevation: 0,
         currentIndex: _selectedIndex,
         onTap: (index) {
-          // Navegación futura
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          switch (index) {
+            case 0: // Home
+              Navigator.pushReplacementNamed(context, '/inicio-aprendiz');
+              break;
+            case 1: // Perfil
+              Navigator.pushNamed(context, '/perfil');
+              break;
+            case 2: // Configuración
+              Navigator.pushNamed(context, '/configuracion');
+              break;
+          }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
@@ -129,8 +183,6 @@ class InicioAprendiz extends StatelessWidget {
   }
 }
 
-// Variables para el BottomNavigationBar
-int _selectedIndex = 0;
 
 class CircularButton extends StatelessWidget {
   final Color color;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../services/api_service.dart';
 import 'vista_permiso.dart'; // 👈 Importamos la nueva vista
 
 class SolicitudesPermiso extends StatefulWidget {
@@ -9,62 +10,84 @@ class SolicitudesPermiso extends StatefulWidget {
 }
 
 class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
-  final List<Map<String, String>> allSolicitudes = [
-    {
-      "nombre": "Juan Pérez",
-      "motivo": "Asistencia médica",
-      "fecha": "2025-09-01",
-      "detalles":
-          "El aprendiz solicita permiso por cita médica con especialista.",
-    },
-    {
-      "nombre": "María López",
-      "motivo": "Permiso personal",
-      "fecha": "2025-09-02",
-      "detalles": "Requiere ausentarse para diligencias personales.",
-    },
-    {
-      "nombre": "Carlos Ruiz",
-      "motivo": "Cita odontológica",
-      "fecha": "2025-09-03",
-      "detalles":
-          "El aprendiz necesita permiso para asistir a cita odontológica.",
-    },
-    {
-      "nombre": "Ana Gómez",
-      "motivo": "Diligencias familiares",
-      "fecha": "2025-09-04",
-      "detalles":
-          "Solicita permiso para asistir a un trámite familiar importante.",
-    },
-    {
-      "nombre": "Pedro Martínez",
-      "motivo": "Permiso académico",
-      "fecha": "2025-09-05",
-      "detalles": "Debe ausentarse para presentar un examen académico externo.",
-    },
-  ];
-  // Variables para el BottomNavigationBar
-  int _selectedIndex = 0; // Variable para controlar el índice seleccionado
+  // Estado UI
+  bool _isLoading = false;
+  String? _errorMessage;
+  int _selectedIndex = 0;
 
-  List<Map<String, String>> filteredSolicitudes = [];
+  // Datos desde API
+  List<Map<String, dynamic>> _solicitudes = [];
+  List<Map<String, dynamic>> _filteredSolicitudes = [];
   String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    filteredSolicitudes = List.from(allSolicitudes);
+    _fetchSolicitudes();
+  }
+
+  Future<void> _fetchSolicitudes() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      final result = await ApiService.getPermisos();
+      final List<dynamic> data = result['data'] ?? [];
+
+      // Normalizar campos que usa la UI
+      final solicitudes = data.map<Map<String, dynamic>>((item) {
+        final String nombreAprendiz = _joinNames(
+          item['aprendiz_name'],
+          item['aprendiz_ape'],
+        );
+        return {
+          'permiso_id': item['permiso_id'],
+          'nombre': nombreAprendiz,
+          'motivo': item['permiso_motivo'] ?? '-',
+          'fecha': item['permiso_fec_solic'] ?? item['permiso_fec_solic'] ?? '',
+          'detalles': item['permiso_evidencia'] ?? '',
+          'raw': item,
+        };
+      }).toList();
+
+      setState(() {
+        _solicitudes = solicitudes;
+        _filteredSolicitudes = List.from(_solicitudes);
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'No se pudieron cargar las solicitudes: $e';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _joinNames(dynamic nombre, dynamic apellido) {
+    final String n = (nombre ?? '').toString().trim();
+    final String a = (apellido ?? '').toString().trim();
+    if (n.isEmpty && a.isEmpty) return 'Aprendiz';
+    if (a.isEmpty) return n;
+    if (n.isEmpty) return a;
+    return '$n $a';
   }
 
   void _applyFilters() {
+    final searchLower = searchQuery.toLowerCase();
     setState(() {
-      filteredSolicitudes =
-          allSolicitudes.where((sol) {
-            final searchLower = searchQuery.toLowerCase();
-            return sol['nombre']!.toLowerCase().contains(searchLower) ||
-                sol['motivo']!.toLowerCase().contains(searchLower) ||
-                sol['fecha']!.toLowerCase().contains(searchLower);
-          }).toList();
+      _filteredSolicitudes = _solicitudes.where((sol) {
+        final nombre = (sol['nombre'] ?? '').toString().toLowerCase();
+        final motivo = (sol['motivo'] ?? '').toString().toLowerCase();
+        final fecha = (sol['fecha'] ?? '').toString().toLowerCase();
+        return nombre.contains(searchLower) ||
+            motivo.contains(searchLower) ||
+            fecha.contains(searchLower);
+      }).toList();
     });
   }
 
@@ -121,61 +144,91 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
 
             // Lista de solicitudes
             Expanded(
-              child:
-                  filteredSolicitudes.isEmpty
-                      ? const Center(
-                        child: Text(
-                          "No hay solicitudes encontradas",
-                          style: TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                      )
-                      : ListView.builder(
-                        itemCount: filteredSolicitudes.length,
-                        itemBuilder: (context, index) {
-                          final solicitud = filteredSolicitudes[index];
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.8),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.5),
-                                width: 1,
-                              ),
-                            ),
-                            child: ListTile(
-                              leading: const Icon(
-                                Icons.request_page,
-                                color: Colors.black,
-                              ),
-                              title: Text(
-                                solicitud['nombre']!,
+              child: RefreshIndicator(
+                onRefresh: _fetchSolicitudes,
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _errorMessage != null
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                _errorMessage!,
+                                textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontSize: 14,
                                 ),
                               ),
-                              subtitle: Text(
-                                "${solicitud['motivo']} • ${solicitud['fecha']}",
-                              ),
-                              trailing: const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: Colors.black54,
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) =>
-                                            VistaPermiso(solicitud: solicitud),
-                                  ),
-                                );
-                              },
                             ),
-                          );
-                        },
-                      ),
+                          )
+                        : _filteredSolicitudes.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  "No hay solicitudes encontradas",
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: _filteredSolicitudes.length,
+                                itemBuilder: (context, index) {
+                                  final solicitud = _filteredSolicitudes[index];
+                                  return Container
+                                  (
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.8),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.5),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      leading: const Icon(
+                                        Icons.request_page,
+                                        color: Colors.black,
+                                      ),
+                                      title: Text(
+                                        (solicitud['nombre'] ?? '-') as String,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        "${solicitud['motivo'] ?? '-'} • ${solicitud['fecha'] ?? ''}",
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 16,
+                                        color: Colors.black54,
+                                      ),
+                                      onTap: () {
+                                        final Map<String, String> solicitudStr = {
+                                          'nombre': (solicitud['nombre'] ?? '').toString(),
+                                          'motivo': (solicitud['motivo'] ?? '').toString(),
+                                          'fecha': (solicitud['fecha'] ?? '').toString(),
+                                          'detalles': (solicitud['detalles'] ?? '').toString(),
+                                        };
+                                        final int permisoId = (solicitud['permiso_id'] as int);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => VistaPermiso(
+                                              permisoId: permisoId,
+                                              solicitud: solicitudStr,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+              ),
             ),
           ],
         ),

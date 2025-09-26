@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../../services/api_service.dart';
 
 class DetalleTareaPage extends StatefulWidget {
+  final int taskId;
   final String nombre;
   final String hora;
 
-  const DetalleTareaPage({super.key, required this.nombre, required this.hora});
+  const DetalleTareaPage({super.key, required this.taskId, required this.nombre, required this.hora});
 
   @override
   State<DetalleTareaPage> createState() => _DetalleTareaPageState();
@@ -13,6 +15,32 @@ class DetalleTareaPage extends StatefulWidget {
 
 class _DetalleTareaPageState extends State<DetalleTareaPage> {
   String? archivoSeleccionado;
+  bool _isLoading = false;
+  Map<String, dynamic>? _userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final res = await ApiService.getProfile();
+      if (res['success'] == true) {
+        setState(() {
+          _userProfile = res['data'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar perfil: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   Future<void> _seleccionarArchivo() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -25,26 +53,60 @@ class _DetalleTareaPageState extends State<DetalleTareaPage> {
         archivoSeleccionado = result.files.single.name;
       });
 
-      // Mostrar mensaje emergente
-      showDialog(
-        context: context,
-        builder:
-            (context) => AlertDialog(
-              title: const Text("✅ Evidencia enviada"),
-              content: Text(
-                "Se ha adjuntado el archivo:\n\n$archivoSeleccionado",
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Cierra el dialogo
-                    Navigator.pop(context); // Regresa a la página anterior
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            ),
+      // Completar tarea con evidencia
+      await _completarTarea();
+    }
+  }
+
+  Future<void> _completarTarea() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final res = await ApiService.completeTask(
+        widget.taskId,
+        archivoSeleccionado,
       );
+
+      if (res['success'] == true) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("✅ Evidencia enviada"),
+            content: Text(
+              "Se ha adjuntado el archivo:\n\n$archivoSeleccionado",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(res['message'] ?? 'Error al completar tarea'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -76,7 +138,7 @@ class _DetalleTareaPageState extends State<DetalleTareaPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Nombre: Nicolás Eduardo Torres Jiménez",
+                "Nombre: ${_userProfile != null ? '${_userProfile!['user_name']} ${_userProfile!['user_ape']}' : 'Cargando...'}",
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -138,7 +200,7 @@ class _DetalleTareaPageState extends State<DetalleTareaPage> {
               const Spacer(),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: _seleccionarArchivo,
+                  onPressed: _isLoading ? null : _seleccionarArchivo,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
                     padding: const EdgeInsets.symmetric(
@@ -150,10 +212,19 @@ class _DetalleTareaPageState extends State<DetalleTareaPage> {
                     ),
                     elevation: 5,
                   ),
-                  icon: const Icon(Icons.attach_file, color: Colors.white),
-                  label: const Text(
-                    "Enviar Evidencia",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  icon: _isLoading 
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.attach_file, color: Colors.white),
+                  label: Text(
+                    _isLoading ? "Enviando..." : "Enviar Evidencia",
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),

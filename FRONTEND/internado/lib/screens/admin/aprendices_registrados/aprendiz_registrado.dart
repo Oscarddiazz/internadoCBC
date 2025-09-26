@@ -1,6 +1,7 @@
 //Pantalla de los aprendices registrados seguir diseño figma
 //Dentro de esta pantalla hacer el filtro
 import 'package:flutter/material.dart';
+import '../../../services/api_service.dart';
 
 class AprendicesRegistrados extends StatefulWidget {
   const AprendicesRegistrados({super.key});
@@ -10,134 +11,64 @@ class AprendicesRegistrados extends StatefulWidget {
 }
 
 class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
-  final List<Map<String, dynamic>> allApprentices = [
-    {
-      "user_id": 1,
-      "user_num_ident": "123456789",
-      "user_name": "Adrian Esteban",
-      "user_ape": "Morales Pineda",
-      "user_email": "adrian.morales@test.com",
-      "user_tel": "3001234567",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Lectiva",
-      "user_gen": "Masculino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-01-15",
-      "fec_fin_form_Apr": "2025-01-15",
-      "ficha_Apr": 123456,
-      "fec_registro": "2024-01-10",
-      "hasPhoto": false,
-    },
-    {
-      "user_id": 2,
-      "user_num_ident": "987654321",
-      "user_name": "Camila Alejandra",
-      "user_ape": "Rojas Martínez",
-      "user_email": "camila.rojas@test.com",
-      "user_tel": "3009876543",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Productiva",
-      "user_gen": "Femenino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-02-01",
-      "fec_fin_form_Apr": "2025-02-01",
-      "ficha_Apr": 654321,
-      "fec_registro": "2024-01-25",
-      "hasPhoto": true,
-    },
-    {
-      "user_id": 3,
-      "user_num_ident": "456789123",
-      "user_name": "Juan Camilo",
-      "user_ape": "Hernández Navarro",
-      "user_email": "juan.hernandez@test.com",
-      "user_tel": "3004567891",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Lectiva",
-      "user_gen": "Masculino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-01-20",
-      "fec_fin_form_Apr": "2025-01-20",
-      "ficha_Apr": 789123,
-      "fec_registro": "2024-01-15",
-      "hasPhoto": false,
-    },
-    {
-      "user_id": 4,
-      "user_num_ident": "789123456",
-      "user_name": "Lucía Fernanda",
-      "user_ape": "Fernández Ortega",
-      "user_email": "lucia.fernandez@test.com",
-      "user_tel": "3007891234",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Productiva",
-      "user_gen": "Femenino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-02-15",
-      "fec_fin_form_Apr": "2025-02-15",
-      "ficha_Apr": 456789,
-      "fec_registro": "2024-02-01",
-      "hasPhoto": true,
-    },
-    {
-      "user_id": 5,
-      "user_num_ident": "321654987",
-      "user_name": "Nicolás Eduardo",
-      "user_ape": "Torres Jiménez",
-      "user_email": "nicolas.torres@test.com",
-      "user_tel": "3003216549",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Lectiva",
-      "user_gen": "Masculino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-01-25",
-      "fec_fin_form_Apr": "2025-01-25",
-      "ficha_Apr": 321654,
-      "fec_registro": "2024-01-20",
-      "hasPhoto": false,
-    },
-    {
-      "user_id": 6,
-      "user_num_ident": "654987321",
-      "user_name": "Oscar David",
-      "user_ape": "Díaz Alvarez",
-      "user_email": "oscar.diaz@test.com",
-      "user_tel": "3006549873",
-      "user_rol": "Aprendiz",
-      "user_discap": "Ninguna",
-      "etp_form_Apr": "Productiva",
-      "user_gen": "Masculino",
-      "user_etn": "No Aplica",
-      "user_img": "default.png",
-      "fec_ini_form_Apr": "2024-03-01",
-      "fec_fin_form_Apr": "2025-03-01",
-      "ficha_Apr": 654987,
-      "fec_registro": "2024-02-15",
-      "hasPhoto": false,
-    },
-  ];
-
+  List<Map<String, dynamic>> allApprentices = [];
   List<Map<String, dynamic>> filteredApprentices = [];
   String searchQuery = '';
   String sortOrder = 'A-Z';
   String photoFilter = 'Todos';
   String etapaFilter = 'Todas';
   int _selectedIndex = 1; // Índice del perfil seleccionado
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    filteredApprentices = List.from(allApprentices);
+    _fetchAprendices();
+  }
+
+  Future<void> _fetchAprendices() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      final res = await ApiService.getAprendices();
+      final List<dynamic> data = res['data'] ?? [];
+      final list = data.map<Map<String, dynamic>>((u) => {
+            'user_id': u['user_id'],
+            'user_num_ident': u['user_num_ident'],
+            'user_name': u['user_name'] ?? '',
+            'user_ape': u['user_ape'] ?? '',
+            'user_email': u['user_email'] ?? '',
+            'user_tel': u['user_tel'] ?? '',
+            'user_rol': u['user_rol'] ?? 'Aprendiz',
+            'user_discap': u['user_discap'] ?? 'Ninguna',
+            'etp_form_Apr': u['etp_form_Apr'] ?? 'Lectiva',
+            'user_gen': u['user_gen'] ?? 'Masculino',
+            'user_etn': u['user_etn'] ?? 'No Aplica',
+            'user_img': u['user_img'] ?? 'default.png',
+            'fec_ini_form_Apr': u['fec_ini_form_Apr'],
+            'fec_fin_form_Apr': u['fec_fin_form_Apr'],
+            'ficha_Apr': u['ficha_Apr'] ?? 0,
+            'fec_registro': u['fec_registro'],
+            'hasPhoto': (u['user_img'] ?? 'default.png') != 'default.png',
+          }).toList();
+      setState(() {
+        allApprentices = list;
+        filteredApprentices = List.from(allApprentices);
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'No se pudieron cargar los aprendices: $e';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _applyFilters() {
@@ -152,7 +83,7 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
                 apprentice['user_ape'].toLowerCase().contains(searchLower) ||
                 apprentice['user_email'].toLowerCase().contains(searchLower) ||
                 apprentice['ficha_Apr'].toString().contains(searchQuery) ||
-                apprentice['user_num_ident'].contains(searchQuery);
+                apprentice['user_num_ident'].toString().contains(searchQuery);
           }).toList();
 
       // Filtrar por foto
@@ -616,8 +547,25 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
 
                       // Apprentices List
                       Expanded(
-                        child:
-                            filteredApprentices.isEmpty
+                        child: RefreshIndicator(
+                          onRefresh: _fetchAprendices,
+                          child: _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : _errorMessage != null
+                                  ? Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Text(
+                                          _errorMessage!,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : filteredApprentices.isEmpty
                                 ? const Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -740,6 +688,7 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
                                     );
                                   },
                                 ),
+                        ),
                       ),
                     ],
                   ),

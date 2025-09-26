@@ -1,10 +1,60 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool _isLoading = false;
+  Map<String, dynamic>? _userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final res = await ApiService.getProfile();
+      if (res['success'] == true) {
+        setState(() {
+          _userProfile = res['data'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar perfil: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -70,21 +120,23 @@ class ProfilePage extends StatelessWidget {
                   _buildInfoItem(
                     icon: Icons.person,
                     label: "Nombre y Apellidos:",
-                    value: "Oscar David Diaz Alvarez",
+                    value: _userProfile != null 
+                        ? "${_userProfile!['user_name']} ${_userProfile!['user_ape']}"
+                        : "Cargando...",
                   ),
                   const SizedBox(height: 32),
                   // Email
                   _buildInfoItem(
                     icon: Icons.mail,
                     label: "Email:",
-                    value: "oscar_ddiaz@soy.sena.edu.co",
+                    value: _userProfile?['user_email'] ?? "Cargando...",
                   ),
                   const SizedBox(height: 32),
                   // Phone
                   _buildInfoItem(
                     icon: Icons.phone,
                     label: "Telefono:",
-                    value: "3013037918",
+                    value: _userProfile?['user_tel'] ?? "Cargando...",
                   ),
                   const SizedBox(height: 32),
                   // Password
