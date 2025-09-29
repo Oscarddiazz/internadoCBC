@@ -10,12 +10,10 @@ class SolicitudesPermiso extends StatefulWidget {
 }
 
 class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
-  // Estado UI
   bool _isLoading = false;
   String? _errorMessage;
   int _selectedIndex = 0;
 
-  // Datos desde API
   List<Map<String, dynamic>> _solicitudes = [];
   List<Map<String, dynamic>> _filteredSolicitudes = [];
   String searchQuery = '';
@@ -35,21 +33,21 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
       final result = await ApiService.getPermisos();
       final List<dynamic> data = result['data'] ?? [];
 
-      // Normalizar campos que usa la UI
-      final solicitudes = data.map<Map<String, dynamic>>((item) {
-        final String nombreAprendiz = _joinNames(
-          item['aprendiz_name'],
-          item['aprendiz_ape'],
-        );
-        return {
-          'permiso_id': item['permiso_id'],
-          'nombre': nombreAprendiz,
-          'motivo': item['permiso_motivo'] ?? '-',
-          'fecha': item['permiso_fec_solic'] ?? item['permiso_fec_solic'] ?? '',
-          'detalles': item['permiso_evidencia'] ?? '',
-          'raw': item,
-        };
-      }).toList();
+      final solicitudes =
+          data.map<Map<String, dynamic>>((item) {
+            final String nombreAprendiz = _joinNames(
+              item['aprendiz_name'],
+              item['aprendiz_ape'],
+            );
+            return {
+              'permiso_id': item['permiso_id'],
+              'nombre': nombreAprendiz,
+              'motivo': item['permiso_motivo'] ?? '-',
+              'fecha': item['permiso_fec_solic'] ?? '',
+              'detalles': item['permiso_evidencia'] ?? '',
+              'raw': item,
+            };
+          }).toList();
 
       setState(() {
         _solicitudes = solicitudes;
@@ -80,14 +78,15 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
   void _applyFilters() {
     final searchLower = searchQuery.toLowerCase();
     setState(() {
-      _filteredSolicitudes = _solicitudes.where((sol) {
-        final nombre = (sol['nombre'] ?? '').toString().toLowerCase();
-        final motivo = (sol['motivo'] ?? '').toString().toLowerCase();
-        final fecha = (sol['fecha'] ?? '').toString().toLowerCase();
-        return nombre.contains(searchLower) ||
-            motivo.contains(searchLower) ||
-            fecha.contains(searchLower);
-      }).toList();
+      _filteredSolicitudes =
+          _solicitudes.where((sol) {
+            final nombre = (sol['nombre'] ?? '').toString().toLowerCase();
+            final motivo = (sol['motivo'] ?? '').toString().toLowerCase();
+            final fecha = (sol['fecha'] ?? '').toString().toLowerCase();
+            return nombre.contains(searchLower) ||
+                motivo.contains(searchLower) ||
+                fecha.contains(searchLower);
+          }).toList();
     });
   }
 
@@ -146,88 +145,145 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _fetchSolicitudes,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _errorMessage != null
+                child:
+                    _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _errorMessage != null
                         ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                _errorMessage!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 14,
-                                ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              _errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
                               ),
                             ),
-                          )
+                          ),
+                        )
                         : _filteredSolicitudes.isEmpty
-                            ? const Center(
-                                child: Text(
-                                  "No hay solicitudes encontradas",
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 16,
+                        ? const Center(
+                          child: Text(
+                            "No hay solicitudes encontradas",
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: _filteredSolicitudes.length,
+                          itemBuilder: (context, index) {
+                            final solicitud = _filteredSolicitudes[index];
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.black12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
                                   ),
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: _filteredSolicitudes.length,
-                                itemBuilder: (context, index) {
-                                  final solicitud = _filteredSolicitudes[index];
-                                  return Container
-                                  (
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.5),
-                                        width: 1,
-                                      ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    solicitud['nombre'] ?? '-',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
-                                    child: ListTile(
-                                      leading: const Icon(
-                                        Icons.request_page,
-                                        color: Colors.black,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    solicitud['motivo'] ?? '-',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Fecha: ${solicitud['fecha'] ?? ''}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.black26),
+                                    ),
+                                    child: Text(
+                                      solicitud['detalles'] ?? 'Sin detalles',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
                                       ),
-                                      title: Text(
-                                        (solicitud['nombre'] ?? '-') as String,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton.icon(
+                                      icon: const Icon(
+                                        Icons.visibility,
+                                        size: 18,
                                       ),
-                                      subtitle: Text(
-                                        "${solicitud['motivo'] ?? '-'} • ${solicitud['fecha'] ?? ''}",
-                                      ),
-                                      trailing: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 16,
-                                        color: Colors.black54,
-                                      ),
-                                      onTap: () {
-                                        final Map<String, String> solicitudStr = {
-                                          'nombre': (solicitud['nombre'] ?? '').toString(),
-                                          'motivo': (solicitud['motivo'] ?? '').toString(),
-                                          'fecha': (solicitud['fecha'] ?? '').toString(),
-                                          'detalles': (solicitud['detalles'] ?? '').toString(),
-                                        };
-                                        final int permisoId = (solicitud['permiso_id'] as int);
+                                      label: const Text("Ver más"),
+                                      onPressed: () {
+                                        final Map<String, String> solicitudStr =
+                                            {
+                                              'nombre':
+                                                  (solicitud['nombre'] ?? '')
+                                                      .toString(),
+                                              'motivo':
+                                                  (solicitud['motivo'] ?? '')
+                                                      .toString(),
+                                              'fecha':
+                                                  (solicitud['fecha'] ?? '')
+                                                      .toString(),
+                                              'detalles':
+                                                  (solicitud['detalles'] ?? '')
+                                                      .toString(),
+                                            };
+                                        final int permisoId =
+                                            (solicitud['permiso_id'] as int);
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => VistaPermiso(
-                                              permisoId: permisoId,
-                                              solicitud: solicitudStr,
-                                            ),
+                                            builder:
+                                                (_) => VistaPermiso(
+                                                  permisoId: permisoId,
+                                                  solicitud: solicitudStr,
+                                                ),
                                           ),
                                         );
                                       },
                                     ),
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
+                            );
+                          },
+                        ),
               ),
             ),
           ],
@@ -242,20 +298,14 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
           setState(() {
             _selectedIndex = index;
           });
-
-          // Navegación según el índice seleccionado
-          setState(() {
-            _selectedIndex = index;
-          });
-          // Navegación según el índice seleccionado
           switch (index) {
-            case 0: // Home
+            case 0:
               Navigator.pushReplacementNamed(context, '/admin-dashboard');
               break;
-            case 1: // Perfil
+            case 1:
               Navigator.pushNamed(context, '/perfil');
               break;
-            case 2: // Configuración
+            case 2:
               Navigator.pushNamed(context, '/configuracion');
               break;
           }

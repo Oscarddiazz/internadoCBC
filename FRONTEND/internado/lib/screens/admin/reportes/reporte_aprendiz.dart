@@ -62,8 +62,8 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
           border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
         ),
         child: SafeArea(
-          child: Container(
-            height: 60,
+          child: SizedBox(
+            height: 55,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -71,19 +71,27 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                   onTap: () {
                     Navigator.pushReplacementNamed(context, '/admin-dashboard');
                   },
-                  child: Icon(Icons.home, size: 24, color: Colors.black),
+                  child: const Icon(Icons.home, size: 26, color: Colors.black),
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/perfil');
                   },
-                  child: Icon(Icons.person, size: 24, color: Colors.black),
+                  child: const Icon(
+                    Icons.person,
+                    size: 26,
+                    color: Colors.black,
+                  ),
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/configuracion');
                   },
-                  child: Icon(Icons.settings, size: 24, color: Colors.black),
+                  child: const Icon(
+                    Icons.settings,
+                    size: 26,
+                    color: Colors.black,
+                  ),
                 ),
               ],
             ),
@@ -95,22 +103,22 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: const Icon(
                       Icons.chevron_left,
-                      size: 32,
+                      size: 28,
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   const Text(
                     'Reporte Aprendiz',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -121,27 +129,33 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
 
             // Search Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Buscar aprendiz...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  prefixIcon: const Icon(Icons.search, color: Colors.black54),
                   filled: true,
                   fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                 ),
               ),
             ),
+            const SizedBox(height: 16),
 
             // Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
+                  horizontal: 20,
+                  vertical: 10,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +167,7 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                         const Text(
                           'Crear nuevo reporte',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -163,54 +177,52 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                             Navigator.pushNamed(context, '/crear-reporte');
                           },
                           child: Container(
-                            width: 40,
-                            height: 40,
+                            width: 38,
+                            height: 38,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 2),
-                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.green[400],
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
                               Icons.add,
-                              size: 24,
-                              color: Colors.black,
+                              size: 22,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
 
                     // Student List
                     Expanded(
                       child: ListView.separated(
                         itemCount: filteredStudents.length,
                         separatorBuilder:
-                            (context, index) => const SizedBox(height: 16),
+                            (context, index) => const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              // Handle student selection
+                              // Aquí se manejará la selección del aprendiz
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 24,
+                                horizontal: 16,
+                                vertical: 12,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD9D9D9),
-                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.black12),
                               ),
-                              child: Center(
-                                child: Text(
-                                  filteredStudents[index],
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    height: 1.2,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              child: Text(
+                                filteredStudents[index],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           );

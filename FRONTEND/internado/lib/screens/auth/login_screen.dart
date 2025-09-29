@@ -15,9 +15,19 @@ class _LoginScreenState extends State<LoginScreen>
   bool _isLoading = false;
   bool _isNavigating = false;
 
-  // Controladores para los campos de texto
+  // Controladores
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Para registro
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidosController = TextEditingController();
+  final TextEditingController _telefonoController = TextEditingController();
+
+  String? _selectedRol;
+  bool _aceptarTerminos = false;
+
+  final List<String> _roles = ['Administrador', 'Delegado', 'Aprendiz'];
 
   @override
   void initState() {
@@ -28,13 +38,18 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nombreController.dispose();
+    _apellidosController.dispose();
+    _telefonoController.dispose();
     super.dispose();
   }
 
   Future<void> _handleLogin() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Por favor completa todos los campos'),
           backgroundColor: Colors.orange,
         ),
@@ -42,9 +57,7 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       await AuthService.login(
@@ -53,27 +66,106 @@ class _LoginScreenState extends State<LoginScreen>
         context,
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
+  }
+
+  void _mostrarTerminos() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Términos y Condiciones"),
+          content: const SingleChildScrollView(
+            child: Text(
+              "Al registrarte, aceptas nuestros términos y condiciones de uso.",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cerrar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _siguiente() {
+    if (_nombreController.text.isEmpty ||
+        _apellidosController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _telefonoController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _selectedRol == null ||
+        !_aceptarTerminos) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Por favor completa todos los campos y acepta los términos y condiciones',
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final password = _passwordController.text;
+    if (password.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La contraseña debe tener al menos 8 caracteres'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final hasUpper = password.contains(RegExp(r'[A-Z]'));
+    final hasLower = password.contains(RegExp(r'[a-z]'));
+    final hasNumber = password.contains(RegExp(r'[0-9]'));
+
+    if (!hasUpper || !hasLower || !hasNumber) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'La contraseña debe contener mayúscula, minúscula y número',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushNamed(
+      context,
+      '/register-step2',
+      arguments: {
+        'nombre': _nombreController.text,
+        'apellidos': _apellidosController.text,
+        'email': _emailController.text,
+        'telefono': _telefonoController.text,
+        'password': _passwordController.text,
+        'rol': _selectedRol,
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Gris claro
+      backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
               const SizedBox(height: 40),
-              // Logo de BioHub
-              Image.asset('assets/img/logo.png', width: 80, height: 80),
+              Image.asset("assets/img/logo.png", width: 80, height: 80),
               const SizedBox(height: 20),
               const Text(
-                'BioHub',
+                "BioHub",
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -81,7 +173,6 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
               ),
               const SizedBox(height: 30),
-              // Tabs
               Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -95,8 +186,8 @@ class _LoginScreenState extends State<LoginScreen>
                   indicatorColor: const Color(0xFF2E7D32),
                   indicatorWeight: 3,
                   tabs: const [
-                    Tab(text: 'Registrarse'),
-                    Tab(text: 'Iniciar Sesion'),
+                    Tab(text: "Registrarse"),
+                    Tab(text: "Iniciar Sesión"),
                   ],
                 ),
               ),
@@ -104,12 +195,7 @@ class _LoginScreenState extends State<LoginScreen>
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    // Tab de Registro
-                    _buildRegisterTab(),
-                    // Tab de Login
-                    _buildLoginTab(),
-                  ],
+                  children: [_buildRegisterTab(), _buildLoginTab()],
                 ),
               ),
             ],
@@ -119,103 +205,26 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  // ---------------- LOGIN ----------------
   Widget _buildLoginTab() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Campo Email
-        const Text(
-          'Email',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D32),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-          ),
-        ),
+        _buildTextField("Email", controller: _emailController),
         const SizedBox(height: 20),
-        // Campo Contraseña
-        const Text(
-          'Contraseña',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D32),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-          ),
-        ),
+        _buildPasswordField("Contraseña", _passwordController),
         const SizedBox(height: 12),
-        // Olvidaste contraseña
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () {},
             child: const Text(
-              '¿Olvidaste tu contraseña?',
+              "¿Olvidaste tu contraseña?",
               style: TextStyle(color: Color(0xFF2E7D32), fontSize: 14),
             ),
           ),
         ),
         const Spacer(),
-        // Botón de Login
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -241,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     )
                     : const Text(
-                      'Iniciar Sesion',
+                      "Iniciar Sesión",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -253,85 +262,72 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  // ---------------- REGISTER ----------------
   Widget _buildRegisterTab() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Registro de Usuario',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2E7D32),
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Campos básicos
-          _buildTextField('Nombre'),
+          _buildTextField("Nombre", controller: _nombreController),
           const SizedBox(height: 16),
-          _buildTextField('Apellidos'),
+          _buildTextField("Apellidos", controller: _apellidosController),
           const SizedBox(height: 16),
-          _buildTextField('Email'),
+          _buildTextField("Email", controller: _emailController),
           const SizedBox(height: 16),
-          _buildTextField('Telefono'),
+          _buildTextField("Teléfono", controller: _telefonoController),
           const SizedBox(height: 16),
-          _buildTextField('Contraseña', isPassword: true),
+          _buildPasswordField("Contraseña", _passwordController),
           const SizedBox(height: 16),
-          _buildDropdown('Rol', ['Estudiante', 'Administrador', 'Docente']),
-          const SizedBox(height: 20),
-          // Requisitos de contraseña
+          _buildDropdown("Rol", _roles, _selectedRol, (value) {
+            setState(() => _selectedRol = value);
+          }),
+          const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(Icons.check_circle, color: Colors.black, size: 16),
+              const Icon(
+                Icons.check_circle,
+                color: Color(0xFF2E7D32),
+                size: 16,
+              ),
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  'Minimo 8 caracteres, contener mayus y minus, numero o caracter especial',
-                  style: TextStyle(fontSize: 12, color: Colors.black),
+                  "Mínimo 8 caracteres, incluir mayúscula, minúscula y número",
+                  style: TextStyle(fontSize: 12, color: Colors.black87),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          // Checkbox términos
           Row(
             children: [
               Checkbox(
-                value: false,
-                onChanged: (value) {},
+                value: _aceptarTerminos,
+                onChanged:
+                    (value) =>
+                        setState(() => _aceptarTerminos = value ?? false),
                 activeColor: const Color(0xFF2E7D32),
               ),
-              const Expanded(
-                child: Text(
-                  'Aceptar Terminos y Condiciones',
-                  style: TextStyle(fontSize: 14),
+              Expanded(
+                child: GestureDetector(
+                  onTap: _mostrarTerminos,
+                  child: const Text(
+                    "Aceptar Términos y Condiciones",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF2E7D32),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 30),
-          // Botón siguiente
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed:
-                  _isNavigating
-                      ? null
-                      : () {
-                        if (!_isNavigating) {
-                          setState(() {
-                            _isNavigating = true;
-                          });
-                          Navigator.pushNamed(context, '/register').then((_) {
-                            if (mounted) {
-                              setState(() {
-                                _isNavigating = false;
-                              });
-                            }
-                          });
-                        }
-                      },
+              onPressed: _siguiente,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE8F5E8),
                 foregroundColor: const Color(0xFF2E7D32),
@@ -342,18 +338,22 @@ class _LoginScreenState extends State<LoginScreen>
                 elevation: 0,
               ),
               child: const Text(
-                'Siguiente',
+                "Siguiente",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(String label, {bool isPassword = false}) {
+  // ---------------- HELPERS ----------------
+  Widget _buildTextField(
+    String label, {
+    TextEditingController? controller,
+    TextInputType? keyboardType,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,15 +367,12 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         const SizedBox(height: 8),
         TextField(
-          obscureText: isPassword,
+          controller: controller,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Colors.grey.shade200,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
@@ -393,7 +390,57 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildDropdown(String label, List<String> options) {
+  Widget _buildPasswordField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2E7D32),
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          obscureText: _obscurePassword,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade200,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: Colors.black87,
+              ),
+              onPressed:
+                  () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown(
+    String label,
+    List<String> options,
+    String? value,
+    Function(String?) onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -408,10 +455,11 @@ class _LoginScreenState extends State<LoginScreen>
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButtonFormField<String>(
+            value: value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
@@ -420,14 +468,15 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
             items:
-                options.map((String option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-            onChanged: (String? newValue) {},
-            hint: const Text('Seleccionar'),
+                options
+                    .map(
+                      (option) =>
+                          DropdownMenuItem(value: option, child: Text(option)),
+                    )
+                    .toList(),
+            onChanged: onChanged,
+            hint: const Text("Seleccionar"),
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black87),
           ),
         ),
       ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/splash_screen.dart';
 import '../screens/welcome_screen.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/auth/register_screen.dart';
+
 import '../screens/auth/register_step2_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/admin/inicio_admin.dart';
@@ -43,7 +43,6 @@ class AppRoutes {
       splash: (context) => const SplashScreen(),
       welcome: (context) => const WelcomeScreen(),
       login: (context) => const LoginScreen(),
-      register: (context) => const RegisterScreen(),
       registerStep2: (context) => const RegisterStep2Screen(),
       home: (context) => const InicioAprendiz(),
 
