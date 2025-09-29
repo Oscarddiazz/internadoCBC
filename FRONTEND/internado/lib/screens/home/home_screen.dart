@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'generar_permiso/generar_permiso.dart';
 import 'casino/casino.dart';
 import 'tareas_dirigidas/tareas_dirigidas.dart';
+import 'reporte/reporte.dart';
 
 class InicioAprendiz extends StatefulWidget {
   const InicioAprendiz({super.key});
@@ -76,7 +77,6 @@ class _InicioAprendizState extends State<InicioAprendiz> {
                             text: 'Generar\nPermisos',
                             size: 140,
                             onTap: () {
-                              // 🔹 Aquí redirige a ProyectoInfoPage
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -124,7 +124,12 @@ class _InicioAprendizState extends State<InicioAprendiz> {
                             text: 'Reportes',
                             size: 140,
                             onTap: () {
-                              Navigator.pushNamed(context, '/reportes');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ReportePage(),
+                                ),
+                              );
                             },
                           ),
                         ],
