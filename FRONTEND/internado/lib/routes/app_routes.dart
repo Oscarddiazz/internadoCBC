@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+
+// Screens principales
 import '../screens/splash_screen.dart';
 import '../screens/welcome_screen.dart';
 import '../screens/auth/login_screen.dart';
-
 import '../screens/auth/register_step2_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/perfil_screen.dart';
+import '../screens/configuracion_screen.dart';
+import '../screens/nortificaciones_screen.dart';
+
+// Screens de administrador
 import '../screens/admin/inicio_admin.dart';
 import '../screens/admin/aprendices_registrados/aprendiz_registrado.dart';
 import '../screens/admin/aprendices_registrados/vista_aprendiz.dart';
-import '../screens/configuracion_screen.dart';
 import '../screens/admin/permisos/permisos_solicitados.dart';
 import '../screens/admin/reportes/crear_reporte.dart';
-import '../screens/perfil_screen.dart';
-import '../screens/nortificaciones_screen.dart';
+
+// Screens de delegado
+import '../screens/Delegado/inicio_delegado.dart';
+import '../screens/Delegado/perfil_aprendiz_casino.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -28,6 +35,10 @@ class AppRoutes {
   static const String aprendicesRegistrados = '/aprendices-registrados';
   static const String vistaAprendiz = '/vista-aprendiz';
   static const String solicitudesPermiso = '/solicitudes-permiso';
+
+  // Rutas de delegado
+  static const String delegadoDashboard = '/delegado-dashboard';
+  static const String perfilAprendizCasino = '/perfil-aprendiz-casino';
 
   // Rutas de configuración
   static const String configuracion = '/configuracion';
@@ -47,7 +58,7 @@ class AppRoutes {
       home: (context) => const InicioAprendiz(),
 
       // Rutas de administrador
-      adminDashboard: (context) => AdminDashboard(),
+      adminDashboard: (context) => const HomePage(),
       aprendicesRegistrados: (context) => const AprendicesRegistrados(),
       vistaAprendiz: (context) {
         final args =
@@ -63,6 +74,13 @@ class AppRoutes {
 
       // Rutas de reportes
       crearReporte: (context) => const ReporteAprendiz(),
+
+      // Rutas de delegado
+      delegadoDashboard: (context) => const DelegadoDashboard(),
+      perfilAprendizCasino: (context) {
+        final cedula = ModalRoute.of(context)!.settings.arguments as String;
+        return PerfilAprendiz(cedula: cedula);
+      },
     };
   }
 }
