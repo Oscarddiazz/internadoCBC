@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
+import '../../routes/app_routes.dart';
 
 class CasinoNumberPad extends StatefulWidget {
   const CasinoNumberPad({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class CasinoNumberPad extends StatefulWidget {
 
 class _CasinoNumberPadState extends State<CasinoNumberPad> {
   String cedulaNumber = '';
+  bool isLoading = false;
 
   void handleNumberClick(int num) {
     setState(() {
@@ -25,6 +28,48 @@ class _CasinoNumberPadState extends State<CasinoNumberPad> {
         cedulaNumber = cedulaNumber.substring(0, cedulaNumber.length - 1);
       }
     });
+  }
+
+  Future<void> consultarCedula() async {
+    if (cedulaNumber.isEmpty) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await ApiService.getUserByCedula(cedulaNumber);
+      
+      if (response['success']) {
+        final userData = response['data'];
+        
+        // Navegar a la pantalla de perfil del aprendiz
+        Navigator.pushNamed(
+          context,
+          AppRoutes.perfilAprendiz,
+          arguments: {
+            'cedula': cedulaNumber,
+            'userData': userData,
+          },
+        );
+      }
+    } catch (e) {
+      // Mostrar error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -175,14 +220,9 @@ class _CasinoNumberPadState extends State<CasinoNumberPad> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed:
-                                cedulaNumber.isEmpty
+                                cedulaNumber.isEmpty || isLoading
                                     ? null
-                                    : () {
-                                      // Aquí irá la lógica de consulta
-                                      print(
-                                        'Consultando cédula: $cedulaNumber',
-                                      );
-                                    },
+                                    : consultarCedula,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF39A900),
                               foregroundColor: Colors.white,
@@ -196,13 +236,22 @@ class _CasinoNumberPadState extends State<CasinoNumberPad> {
                               elevation: 8,
                               shadowColor: Colors.black.withOpacity(0.3),
                             ),
-                            child: const Text(
-                              'Consultar',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Consultar',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'routes/app_routes.dart';
 import 'config/app_config.dart';
 import 'services/api_service.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar servicios
+  await NotificationService().initialize();
 
   // Mostrar configuración al iniciar
   AppConfig.printCurrentConfig();

@@ -13,6 +13,10 @@ import '../screens/admin/permisos/permisos_solicitados.dart';
 import '../screens/admin/reportes/crear_reporte.dart';
 import '../screens/perfil_screen.dart';
 import '../screens/nortificaciones_screen.dart';
+import '../screens/Delegado/inicio_delegado.dart';
+import '../screens/Delegado/ingresa_cedula.dart';
+import '../screens/Delegado/perfil_aprendiz_casino.dart';
+import '../screens/Delegado/historial.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -31,7 +35,9 @@ class AppRoutes {
 
   // Rutas de delegado
   static const String delegadoDashboard = '/delegado-dashboard';
-  static const String perfilAprendizCasino = '/perfil-aprendiz-casino';
+  static const String casino = '/casino';
+  static const String perfilAprendiz = '/perfil-aprendiz';
+  static const String historial = '/historial';
 
   // Rutas de configuración
   static const String configuracion = '/configuracion';
@@ -59,6 +65,18 @@ class AppRoutes {
         return StudentProfileScreen(apprenticeData: args);
       },
       solicitudesPermiso: (context) => const SolicitudesPermiso(),
+
+      // Rutas de delegado
+      delegadoDashboard: (context) => const DelegadoDashboard(),
+      casino: (context) => const CasinoNumberPad(),
+      perfilAprendiz: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+        return PerfilAprendiz(
+          cedula: args?['cedula'] ?? '',
+          userData: args?['userData'],
+        );
+      },
+      historial: (context) => const HistorialPage(),
 
       // Rutas de configuración
       configuracion: (context) => const ConfiguracionScreen(),

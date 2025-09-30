@@ -2,18 +2,24 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const http = require('http');
 require('dotenv').config({ path: './config.env' });
 
 // Importar configuración de base de datos
 const { testConnection } = require('./config/database');
+
+// Importar servicio de WebSocket
+const socketService = require('./services/socketService');
 
 // Importar rutas
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const taskRoutes = require('./routes/tasks');
 const permissionRoutes = require('./routes/permissions');
+const historyRoutes = require('./routes/history');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
 // Configuración de rate limiting
@@ -86,7 +92,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       users: '/api/users',
       tasks: '/api/tasks',
-      permissions: '/api/permissions'
+      permissions: '/api/permissions',
+      history: '/api/history'
     }
   });
 });
@@ -106,6 +113,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/permissions', permissionRoutes);
+app.use('/api/history', historyRoutes);
 
 // Middleware para manejar rutas no encontradas
 app.use('*', (req, res) => {
@@ -134,13 +142,17 @@ const startServer = async () => {
       process.exit(1);
     }
 
+    // Inicializar WebSocket
+    socketService.initialize(server);
+
     // Iniciar servidor
-    app.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log('\n🚀 ===== SERVIDOR INICIADO =====');
       console.log(`📊 Puerto: ${PORT}`);
       console.log(`🌐 Web: http://localhost:${PORT}`);
       console.log(`📱 Android: http://10.0.2.2:${PORT}`);
       console.log(`💚 Estado: http://localhost:${PORT}/health`);
+      console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
       console.log('================================\n');
     });
 

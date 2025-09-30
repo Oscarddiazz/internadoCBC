@@ -72,6 +72,37 @@ const getUserById = async (req, res) => {
   }
 };
 
+// Obtener usuario por número de identificación (cédula)
+const getUserByCedula = async (req, res) => {
+  try {
+    const { cedula } = req.params;
+
+    const users = await executeQuery(
+      'SELECT user_id, user_num_ident, user_name, user_ape, user_email, user_tel, user_rol, user_discap, etp_form_Apr, user_gen, user_etn, user_img, fec_ini_form_Apr, fec_fin_form_Apr, ficha_Apr, fec_registro FROM usuario WHERE user_num_ident = ?',
+      [cedula]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado con esta cédula'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: users[0]
+    });
+
+  } catch (error) {
+    console.error('Error obteniendo usuario por cédula:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+};
+
 // Crear nuevo usuario
 const createUser = async (req, res) => {
   try {
@@ -424,6 +455,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getAllUsers,
   getUserById,
+  getUserByCedula,
   createUser,
   updateUser,
   deleteUser,

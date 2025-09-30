@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
 import 'api_service.dart';
+import 'notification_service.dart';
 
 class AuthService {
   static Usuario? _currentUser;
@@ -49,6 +50,12 @@ class AuthService {
                   ? DateTime.parse(userData['fec_fin_form_Apr'])
                   : DateTime.now().add(Duration(days: 365)),
           fichaApr: userData['ficha_Apr'] ?? 0,
+        );
+
+        // Autenticar en WebSocket para notificaciones
+        NotificationService().authenticateUser(
+          _currentUser!.userId,
+          _currentUser!.userRol.toString().split('.').last,
         );
 
         // Navegar según el rol
@@ -119,9 +126,16 @@ class AuthService {
                 userData['fec_fin_form_Apr'] != null
                     ? DateTime.parse(userData['fec_fin_form_Apr'])
                     : DateTime.now().add(Duration(days: 365)),
-            fichaApr: userData['ficha_Apr'] ?? 0,
-          );
-          return true;
+          fichaApr: userData['ficha_Apr'] ?? 0,
+        );
+
+        // Autenticar en WebSocket para notificaciones
+        NotificationService().authenticateUser(
+          _currentUser!.userId,
+          _currentUser!.userRol.toString().split('.').last,
+        );
+
+        return true;
         }
       }
       return false;
@@ -214,6 +228,9 @@ class AuthService {
   // Logout
   static Future<void> logout(BuildContext context) async {
     try {
+      // Desconectar WebSocket
+      NotificationService().disconnect();
+
       // Limpiar token del ApiService
       ApiService.logout();
 

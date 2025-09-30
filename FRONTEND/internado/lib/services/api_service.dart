@@ -727,6 +727,87 @@ class ApiService {
     }
   }
 
+  // Obtener usuario por cédula (para delegados)
+  static Future<Map<String, dynamic>> getUserByCedula(String cedula) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/users/cedula/$cedula'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al obtener usuario');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al obtener usuario: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Obtener historial de aprendices (para delegados)
+  static Future<Map<String, dynamic>> getAprendicesHistory() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/history/aprendices'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al obtener historial');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al obtener historial: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  // Obtener historial de un aprendiz específico
+  static Future<Map<String, dynamic>> getAprendizHistory(int aprendizId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/history/aprendiz/$aprendizId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          return data;
+        } else {
+          throw Exception(data['message'] ?? 'Error al obtener historial del aprendiz');
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(
+          errorData['message'] ??
+              'Error al obtener historial del aprendiz: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
   // Cerrar sesión
   static void logout() {
     _token = null;

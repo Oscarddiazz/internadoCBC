@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../routes/app_routes.dart';
+import '../../widgets/notification_badge.dart';
+import '../../widgets/connection_status.dart';
 
 class DelegadoDashboard extends StatefulWidget {
   const DelegadoDashboard({Key? key}) : super(key: key);
@@ -18,12 +21,18 @@ class _DelegadoDashboardState extends State<DelegadoDashboard> {
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
+          NotificationBadge(
+            onTap: () {
               Navigator.pushNamed(context, '/notificaciones');
             },
+            child: IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              onPressed: () {
+                Navigator.pushNamed(context, '/notificaciones');
+              },
+            ),
           ),
+          const ConnectionStatus(),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -86,7 +95,7 @@ class _DelegadoDashboardState extends State<DelegadoDashboard> {
                             text: 'Casino',
                             size: 140,
                             onTap: () {
-                              // Mantener la navegación original
+                              Navigator.pushNamed(context, AppRoutes.casino);
                             },
                           ),
                           CircularButton(
@@ -94,7 +103,7 @@ class _DelegadoDashboardState extends State<DelegadoDashboard> {
                             text: 'Historial',
                             size: 140,
                             onTap: () {
-                              // Mantener la navegación original
+                              Navigator.pushNamed(context, AppRoutes.historial);
                             },
                           ),
                         ],

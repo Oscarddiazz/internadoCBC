@@ -1,20 +1,49 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
-class HistorialPage extends StatelessWidget {
+class HistorialPage extends StatefulWidget {
   const HistorialPage({Key? key}) : super(key: key);
 
   @override
+  State<HistorialPage> createState() => _HistorialPageState();
+}
+
+class _HistorialPageState extends State<HistorialPage> {
+  List<Map<String, dynamic>> aprendices = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAprendices();
+  }
+
+  Future<void> _loadAprendices() async {
+    try {
+      final response = await ApiService.getAprendicesHistory();
+      
+      if (response['success']) {
+        setState(() {
+          aprendices = List<Map<String, dynamic>>.from(response['data']);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = response['message'] ?? 'Error al cargar el historial';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error de conexión: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final contacts = [
-      {"name": "Wilson Duarte Vaca", "status": "Ahora mismo"},
-      {"name": "Jesús David Aguilar Lopez", "status": "Hace 15 minutos"},
-      {"name": "Diego Andrés Montero", "status": "Ayer"},
-      {"name": "Dilan Omar Morales Reyes", "status": "Hace 6 horas"},
-      {"name": "Emily Norena Mercado", "status": "Ahora mismo"},
-      {"name": "Javier Enrique Pinzón", "status": "Hace 30 minutos"},
-      {"name": "Juan Camilo Goyeneche", "status": "Ahora mismo"},
-      {"name": "Abelardo Vásquez Herrera", "status": "Ahora mismo"},
-    ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6FBE4),
@@ -35,54 +64,110 @@ class HistorialPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          final contact = contacts[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: Row(
-              children: [
-                // Avatar
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFD9D9D9),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Contact Info
-                Expanded(
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF2E7D32),
+              ),
+            )
+          : errorMessage != null
+              ? Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        contact["name"]!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red[300],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 16),
                       Text(
-                        contact["status"]!,
-                        style: TextStyle(
+                        errorMessage!,
+                        style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.red,
                         ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadAprendices,
+                        child: const Text('Reintentar'),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                )
+              : aprendices.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No hay aprendices registrados',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      itemCount: aprendices.length,
+                      itemBuilder: (context, index) {
+                        final aprendiz = aprendices[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 32),
+                          child: Row(
+                            children: [
+                              // Avatar
+                              Container(
+                                width: 120,
+                                height: 120,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFD9D9D9),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Contact Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${aprendiz['user_name']} ${aprendiz['user_ape']}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      aprendiz['status'] ?? 'Sin información',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black.withOpacity(0.6),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Ficha: ${aprendiz['ficha_Apr'] ?? 'No disponible'}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(0.5),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
     );
   }
 }

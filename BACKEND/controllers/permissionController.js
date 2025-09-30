@@ -1,4 +1,5 @@
 const { executeQuery } = require('../config/database');
+const socketService = require('../services/socketService');
 
 // Obtener todos los permisos
 const getAllPermissions = async (req, res) => {
@@ -134,6 +135,9 @@ const createPermission = async (req, res) => {
       [result.insertId]
     );
 
+    // Enviar notificación en tiempo real
+    socketService.notifyNewPermission(newPermission[0]);
+
     res.status(201).json({
       success: true,
       message: 'Permiso solicitado exitosamente',
@@ -198,6 +202,9 @@ const respondToPermission = async (req, res) => {
        WHERE p.permiso_id = ?`,
       [id]
     );
+
+    // Enviar notificación en tiempo real
+    socketService.notifyPermissionResponse(updatedPermission[0], respuesta);
 
     res.json({
       success: true,

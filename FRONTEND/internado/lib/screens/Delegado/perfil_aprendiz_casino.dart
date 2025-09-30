@@ -3,7 +3,13 @@ import '../../routes/app_routes.dart';
 
 class PerfilAprendiz extends StatelessWidget {
   final String cedula;
-  const PerfilAprendiz({super.key, required this.cedula});
+  final Map<String, dynamic>? userData;
+  
+  const PerfilAprendiz({
+    super.key, 
+    required this.cedula,
+    this.userData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +64,13 @@ class PerfilAprendiz extends StatelessWidget {
 
                 // Name Card
                 _buildCard(
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Juan Camilo\nHernández Navarro',
+                      userData != null 
+                        ? '${userData!['user_name'] ?? ''}\n${userData!['user_ape'] ?? ''}'
+                        : 'Cargando...',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         height: 1.2,
@@ -102,28 +110,28 @@ class PerfilAprendiz extends StatelessWidget {
 
                 // Phone and Age Card
                 _buildCard(
-                  child: const Center(
+                  child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Telefono:',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          '3015825252',
-                          style: TextStyle(
+                          userData?['user_tel'] ?? 'No disponible',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 12),
-                        Text(
-                          'Edad: 18',
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Rol: Aprendiz',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -136,21 +144,21 @@ class PerfilAprendiz extends StatelessWidget {
 
                 // Ficha and Etapa Card
                 _buildCard(
-                  child: const Center(
+                  child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Ficha: 2877051',
-                          style: TextStyle(
+                          'Ficha: ${userData?['ficha_Apr'] ?? 'No disponible'}',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          'Etapa: Lectiva',
-                          style: TextStyle(
+                          'Etapa: ${userData?['etp_form_Apr'] ?? 'No disponible'}',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -162,11 +170,11 @@ class PerfilAprendiz extends StatelessWidget {
 
                 // Email Card
                 _buildCard(
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'camilo_hernandez\n@soy.sena.edu.co',
+                      userData?['user_email'] ?? 'No disponible',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.3,
@@ -203,16 +211,16 @@ class PerfilAprendiz extends StatelessWidget {
                 border: Border.all(color: Colors.black, width: 2),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Text(
-                    'Inicio de Formacion: 22/01/2024',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    'Inicio de Formacion: ${userData?['fec_ini_form_Apr'] ?? 'No disponible'}',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Fin de Formacion: 21/04/2026',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    'Fin de Formacion: ${userData?['fec_fin_form_Apr'] ?? 'No disponible'}',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 const { executeQuery } = require('../config/database');
+const socketService = require('../services/socketService');
 
 // Obtener todas las tareas
 const getAllTasks = async (req, res) => {
@@ -148,6 +149,9 @@ const createTask = async (req, res) => {
        WHERE t.tarea_id = ?`,
       [result.insertId]
     );
+
+    // Enviar notificación en tiempo real
+    socketService.notifyNewTask(newTask[0]);
 
     res.status(201).json({
       success: true,
@@ -328,6 +332,9 @@ const completeTask = async (req, res) => {
        WHERE t.tarea_id = ?`,
       [id]
     );
+
+    // Enviar notificación en tiempo real
+    socketService.notifyTaskCompleted(updatedTask[0]);
 
     res.json({
       success: true,
