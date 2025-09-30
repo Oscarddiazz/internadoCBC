@@ -1,150 +1,265 @@
 import 'package:flutter/material.dart';
+import 'documentos/cargar_documentos.dart';
+import 'documentos/vista_documentos.dart';
+import 'reportes/reporte_general.dart';
+import 'reportes/reporte_aprendiz.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class AdminDashboard extends StatefulWidget {
+  const AdminDashboard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Aprendiz App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'System'),
-      home: const HomePage(),
-    );
-  }
+  State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class _AdminDashboardState extends State<AdminDashboard> {
+  int _selectedIndex = 0;
+
+  void _mostrarOpcionesDocumentos(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Documentos"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.upload_file, color: Colors.blue),
+              title: const Text("Cargar documento"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CargarDocumentos(),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.visibility, color: Colors.green),
+              title: const Text("Visualizar documento"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const VisualizarDocumentos(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cerrar"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _mostrarOpcionesReportes(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Reportes"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.insert_chart, color: Colors.blue),
+              title: const Text("Reporte general"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReporteGeneral()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.person, color: Colors.green),
+              title: const Text("Reporte aprendiz"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ReporteAprendizPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cerrar"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Panel de Administración'),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/notificaciones');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configuracion');
+            },
+          ),
+        ],
+      ),
       backgroundColor: const Color(0xFFF6FBE4),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Viernes 9 de Agosto del 2025',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Buenos dias, Aprendiz',
+                        'Buenos días, Admin',
                         style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.normal,
                           color: Colors.black,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.black,
-                      size: 28,
-                    ),
+                  Row(
+                    children: const [
+                      Icon(Icons.search, size: 24),
+                      SizedBox(width: 16),
+                      Icon(Icons.notifications_outlined, size: 24),
+                    ],
                   ),
                 ],
               ),
-            ),
-            // Botones circulares
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CircularButton(
-                          color: const Color(0xFFFFE196),
-                          text: 'Casino',
-                          size: 140,
-                          onTap: () {},
-                        ),
-                        CircularButton(
-                          color: const Color(0xFF69B840),
-                          text: 'Historial',
-                          size: 140,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CircularButton(
-                          color: const Color(0xFFCC7766),
-                          text: 'Proximamente',
-                          size: 140,
-                          onTap: () {},
-                        ),
-                        CircularButton(
-                          color: const Color(0xFF879D9A),
-                          text: 'En\nDesarrollo',
-                          size: 140,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ],
+
+              // Botones circulares
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CircularButton(
+                            color: const Color(0xFFFFE196),
+                            text: 'Aprendices\nRegistrados',
+                            size: 140,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/aprendices-registrados',
+                              );
+                            },
+                          ),
+                          CircularButton(
+                            color: const Color(0xFF69B840),
+                            text: 'Solicitudes\nPermiso',
+                            size: 140,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/solicitudes-permiso',
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CircularButton(
+                            color: const Color(0xFFCC7766),
+                            text: 'Documentos',
+                            size: 140,
+                            onTap: () {
+                              _mostrarOpcionesDocumentos(context);
+                            },
+                          ),
+                          CircularButton(
+                            color: const Color(0xFF879D9A),
+                            text: 'Reportes',
+                            size: 140,
+                            onTap: () {
+                              _mostrarOpcionesReportes(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.home_outlined,
-                      color: Colors.black,
-                      size: 32,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.person_outline,
-                      color: Colors.black,
-                      size: 32,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                      color: Colors.black,
-                      size: 32,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFFF6FBE4),
+        elevation: 0,
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          // Navegación según el índice seleccionado
+          switch (index) {
+            case 0: // Home
+              Navigator.pushReplacementNamed(context, '/admin-dashboard');
+              break;
+            case 1: // Perfil
+              Navigator.pushNamed(context, '/perfil');
+              break;
+            case 2: // Configuración
+              Navigator.pushNamed(context, '/configuracion');
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            label: '',
+          ),
+        ],
       ),
     );
   }

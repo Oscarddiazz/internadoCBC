@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
-
-// Screens principales
 import '../screens/splash_screen.dart';
 import '../screens/welcome_screen.dart';
 import '../screens/auth/login_screen.dart';
+
 import '../screens/auth/register_step2_screen.dart';
 import '../screens/home/home_screen.dart';
-import '../screens/perfil_screen.dart';
-import '../screens/configuracion_screen.dart';
-import '../screens/nortificaciones_screen.dart';
-
-// Screens de administrador
 import '../screens/admin/inicio_admin.dart';
 import '../screens/admin/aprendices_registrados/aprendiz_registrado.dart';
 import '../screens/admin/aprendices_registrados/vista_aprendiz.dart';
+import '../screens/configuracion_screen.dart';
 import '../screens/admin/permisos/permisos_solicitados.dart';
 import '../screens/admin/reportes/crear_reporte.dart';
-
-// Screens de delegado
-import '../screens/Delegado/inicio_delegado.dart';
-import '../screens/Delegado/perfil_aprendiz_casino.dart';
+import '../screens/perfil_screen.dart';
+import '../screens/nortificaciones_screen.dart';
 
 class AppRoutes {
   // Rutas principales
@@ -58,7 +51,7 @@ class AppRoutes {
       home: (context) => const InicioAprendiz(),
 
       // Rutas de administrador
-      adminDashboard: (context) => const HomePage(),
+      adminDashboard: (context) => AdminDashboard(),
       aprendicesRegistrados: (context) => const AprendicesRegistrados(),
       vistaAprendiz: (context) {
         final args =
@@ -74,13 +67,6 @@ class AppRoutes {
 
       // Rutas de reportes
       crearReporte: (context) => const ReporteAprendiz(),
-
-      // Rutas de delegado
-      delegadoDashboard: (context) => const DelegadoDashboard(),
-      perfilAprendizCasino: (context) {
-        final cedula = ModalRoute.of(context)!.settings.arguments as String;
-        return PerfilAprendiz(cedula: cedula);
-      },
     };
   }
 }
