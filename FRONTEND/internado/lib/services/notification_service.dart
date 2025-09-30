@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'socket_service.dart';
 
 class NotificationService {
@@ -43,7 +44,6 @@ class NotificationService {
       'Alertas del Sistema - Producción',
       description: 'Notificaciones en tiempo real del sistema de internado',
       importance: Importance.max,
-      priority: Priority.high,
       playSound: true,
       enableVibration: true,
       showBadge: true,
@@ -226,9 +226,10 @@ class NotificationService {
       id,
       title,
       body,
-      scheduledDate,
+      tz.TZDateTime.from(scheduledDate, tz.local),
       notificationDetails,
       payload: payload,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
@@ -263,6 +264,9 @@ class NotificationService {
 
   // Stream de conexión
   Stream<bool> get connectionStream => _socketService.connectionStream;
+
+  // Stream de notificaciones
+  Stream<Map<String, dynamic>> get notificationStream => _socketService.notificationStream;
 
   // Manejar tap en notificación
   void _onNotificationTapped(NotificationResponse response) {

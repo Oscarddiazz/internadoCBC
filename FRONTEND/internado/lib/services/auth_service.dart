@@ -54,7 +54,7 @@ class AuthService {
 
         // Autenticar en WebSocket para notificaciones
         NotificationService().authenticateUser(
-          _currentUser!.userId,
+          _currentUser!.userId!,
           _currentUser!.userRol.toString().split('.').last,
         );
 
@@ -131,7 +131,7 @@ class AuthService {
 
         // Autenticar en WebSocket para notificaciones
         NotificationService().authenticateUser(
-          _currentUser!.userId,
+          _currentUser!.userId!,
           _currentUser!.userRol.toString().split('.').last,
         );
 
