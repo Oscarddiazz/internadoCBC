@@ -155,7 +155,7 @@ class _VisualizarDocumentosState extends State<VisualizarDocumentos> {
                         ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
-                          value: tempType,
+                          initialValue: tempType,
                           items:
                               ['Todos', 'PDF', 'Word', 'Imagen', 'Excel']
                                   .map(

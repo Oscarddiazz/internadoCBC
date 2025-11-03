@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ReporteGeneralFecha extends StatefulWidget {
-  const ReporteGeneralFecha({Key? key}) : super(key: key);
+  const ReporteGeneralFecha({super.key});
 
   @override
   State<ReporteGeneralFecha> createState() => _ReporteGeneralFechaState();
@@ -152,7 +152,7 @@ class _ReporteGeneralFechaState extends State<ReporteGeneralFecha> {
                                                 Navigator.pop(context);
                                               },
                                             );
-                                          }).toList(),
+                                          }),
                                         ],
                                       ),
                                     ),

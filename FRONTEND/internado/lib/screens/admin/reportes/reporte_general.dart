@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'reporte_general_fecha.dart';
 
 class ReporteGeneral extends StatefulWidget {
+  const ReporteGeneral({super.key});
+
   @override
   _ReporteGeneralState createState() => _ReporteGeneralState();
 }
@@ -104,58 +106,56 @@ class _ReporteGeneralState extends State<ReporteGeneral> {
                           SizedBox(height: 32),
 
                           // Main Options
-                          ...mainOptions
-                              .map(
-                                (option) => Padding(
-                                  padding: EdgeInsets.only(bottom: 16),
-                                  child: GestureDetector(
-                                    onTap: () => toggleOption(option),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 24,
-                                          height: 24,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.black,
-                                              width: 2,
-                                            ),
-                                            color:
-                                                selectedOptions.contains(option)
-                                                    ? Colors.black
-                                                    : Colors.white,
-                                          ),
-                                          child:
-                                              selectedOptions.contains(option)
-                                                  ? Center(
-                                                    child: Container(
-                                                      width: 12,
-                                                      height: 12,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  )
-                                                  : null,
+                          ...mainOptions.map(
+                            (option) => Padding(
+                              padding: EdgeInsets.only(bottom: 16),
+                              child: GestureDetector(
+                                onTap: () => toggleOption(option),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.black,
+                                          width: 2,
                                         ),
-                                        SizedBox(width: 16),
-                                        Expanded(
-                                          child: Text(
-                                            option,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                        color:
+                                            selectedOptions.contains(option)
+                                                ? Colors.black
+                                                : Colors.white,
+                                      ),
+                                      child:
+                                          selectedOptions.contains(option)
+                                              ? Center(
+                                                child: Container(
+                                                  width: 12,
+                                                  height: 12,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              )
+                                              : null,
                                     ),
-                                  ),
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ),
+                          ),
 
                           SizedBox(height: 8),
 
@@ -190,64 +190,56 @@ class _ReporteGeneralState extends State<ReporteGeneral> {
 
                           if (showAdvanced) ...[
                             SizedBox(height: 16),
-                            ...advancedOptions
-                                .map(
-                                  (option) => Padding(
-                                    padding: EdgeInsets.only(bottom: 16),
-                                    child: GestureDetector(
-                                      onTap: () => toggleOption(option),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: Colors.black,
-                                                width: 2,
-                                              ),
-                                              color:
-                                                  selectedOptions.contains(
-                                                        option,
-                                                      )
-                                                      ? Colors.black
-                                                      : Colors.white,
-                                            ),
-                                            child:
-                                                selectedOptions.contains(option)
-                                                    ? Center(
-                                                      child: Container(
-                                                        width: 12,
-                                                        height: 12,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                              shape:
-                                                                  BoxShape
-                                                                      .circle,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                      ),
-                                                    )
-                                                    : null,
+                            ...advancedOptions.map(
+                              (option) => Padding(
+                                padding: EdgeInsets.only(bottom: 16),
+                                child: GestureDetector(
+                                  onTap: () => toggleOption(option),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
                                           ),
-                                          SizedBox(width: 16),
-                                          Expanded(
-                                            child: Text(
-                                              option,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                          color:
+                                              selectedOptions.contains(option)
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                        ),
+                                        child:
+                                            selectedOptions.contains(option)
+                                                ? Center(
+                                                  child: Container(
+                                                    width: 12,
+                                                    height: 12,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                )
+                                                : null,
                                       ),
-                                    ),
+                                      SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          option,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                )
-                                .toList(),
+                                ),
+                              ),
+                            ),
                           ],
                         ],
                       ),
@@ -288,7 +280,7 @@ class _ReporteGeneralState extends State<ReporteGeneral> {
           border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
         ),
         child: SafeArea(
-          child: Container(
+          child: SizedBox(
             height: 60,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

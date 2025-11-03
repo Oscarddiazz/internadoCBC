@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'socket_service.dart';
@@ -9,9 +8,10 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
   final SocketService _socketService = SocketService();
-  
+
   bool _isInitialized = false;
   StreamSubscription<Map<String, dynamic>>? _notificationSubscription;
 
@@ -29,10 +29,10 @@ class NotificationService {
   Future<void> _initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    
+
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
-    
+
     await _notifications.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
@@ -51,13 +51,17 @@ class NotificationService {
     );
 
     await _notifications
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
   // Configurar listener de notificaciones del WebSocket
   void _setupNotificationListener() {
-    _notificationSubscription = _socketService.notificationStream.listen((notification) {
+    _notificationSubscription = _socketService.notificationStream.listen((
+      notification,
+    ) {
       _handleNotification(notification);
     });
   }
@@ -124,7 +128,7 @@ class NotificationService {
   void _showPermissionResponseNotification(Map<String, dynamic> data) {
     final String response = data['response'] ?? '';
     final String emoji = response == 'aprobado' ? '✅' : '❌';
-    
+
     _showNotification(
       id: 4,
       title: '$emoji Permiso ${response.toUpperCase()}',
@@ -137,7 +141,7 @@ class NotificationService {
   void _showSystemAlert(Map<String, dynamic> data) {
     final String level = data['level'] ?? 'info';
     String emoji = 'ℹ️';
-    
+
     switch (level) {
       case 'warning':
         emoji = '⚠️';
@@ -175,16 +179,18 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'internado_alerts',
-      'Alertas del Sistema',
-      channelDescription: 'Alertas y notificaciones importantes del sistema',
-      importance: Importance.max,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      playSound: true,
-      enableVibration: true,
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'internado_alerts',
+          'Alertas del Sistema',
+          channelDescription:
+              'Alertas y notificaciones importantes del sistema',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          playSound: true,
+          enableVibration: true,
+        );
 
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
@@ -207,16 +213,18 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'internado_alerts',
-      'Alertas del Sistema',
-      channelDescription: 'Alertas y notificaciones importantes del sistema',
-      importance: Importance.max,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      playSound: true,
-      enableVibration: true,
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'internado_alerts',
+          'Alertas del Sistema',
+          channelDescription:
+              'Alertas y notificaciones importantes del sistema',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          playSound: true,
+          enableVibration: true,
+        );
 
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
@@ -230,7 +238,8 @@ class NotificationService {
       notificationDetails,
       payload: payload,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
@@ -266,12 +275,13 @@ class NotificationService {
   Stream<bool> get connectionStream => _socketService.connectionStream;
 
   // Stream de notificaciones
-  Stream<Map<String, dynamic>> get notificationStream => _socketService.notificationStream;
+  Stream<Map<String, dynamic>> get notificationStream =>
+      _socketService.notificationStream;
 
   // Manejar tap en notificación
   void _onNotificationTapped(NotificationResponse response) {
     print('🔔 Notificación tocada: ${response.payload}');
-    
+
     // Aquí puedes manejar la navegación según el payload
     if (response.payload != null) {
       _handleNotificationTap(response.payload!);
@@ -284,7 +294,7 @@ class NotificationService {
     if (parts.length >= 2) {
       final type = parts[0];
       final id = parts[1];
-      
+
       switch (type) {
         case 'task':
           // Navegar a tareas

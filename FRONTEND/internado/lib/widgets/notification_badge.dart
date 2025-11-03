@@ -6,11 +6,7 @@ class NotificationBadge extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
 
-  const NotificationBadge({
-    Key? key,
-    required this.child,
-    this.onTap,
-  }) : super(key: key);
+  const NotificationBadge({super.key, required this.child, this.onTap});
 
   @override
   State<NotificationBadge> createState() => _NotificationBadgeState();
@@ -27,11 +23,13 @@ class _NotificationBadgeState extends State<NotificationBadge> {
   }
 
   void _setupNotificationListener() {
-    _notificationSubscription = NotificationService().notificationStream.listen((notification) {
-      setState(() {
-        _notificationCount++;
-      });
-    });
+    _notificationSubscription = NotificationService().notificationStream.listen(
+      (notification) {
+        setState(() {
+          _notificationCount++;
+        });
+      },
+    );
   }
 
   @override
@@ -57,12 +55,11 @@ class _NotificationBadgeState extends State<NotificationBadge> {
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                constraints: const BoxConstraints(
-                  minWidth: 16,
-                  minHeight: 16,
-                ),
+                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 child: Text(
-                  _notificationCount > 99 ? '99+' : _notificationCount.toString(),
+                  _notificationCount > 99
+                      ? '99+'
+                      : _notificationCount.toString(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,

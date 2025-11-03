@@ -4,7 +4,7 @@ import '../../widgets/notification_badge.dart';
 import '../../widgets/connection_status.dart';
 
 class DelegadoDashboard extends StatefulWidget {
-  const DelegadoDashboard({Key? key}) : super(key: key);
+  const DelegadoDashboard({super.key});
 
   @override
   State<DelegadoDashboard> createState() => _DelegadoDashboardState();

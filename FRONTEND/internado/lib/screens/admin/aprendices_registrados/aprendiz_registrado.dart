@@ -35,25 +35,30 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
     try {
       final res = await ApiService.getAprendices();
       final List<dynamic> data = res['data'] ?? [];
-      final list = data.map<Map<String, dynamic>>((u) => {
-            'user_id': u['user_id'],
-            'user_num_ident': u['user_num_ident'],
-            'user_name': u['user_name'] ?? '',
-            'user_ape': u['user_ape'] ?? '',
-            'user_email': u['user_email'] ?? '',
-            'user_tel': u['user_tel'] ?? '',
-            'user_rol': u['user_rol'] ?? 'Aprendiz',
-            'user_discap': u['user_discap'] ?? 'Ninguna',
-            'etp_form_Apr': u['etp_form_Apr'] ?? 'Lectiva',
-            'user_gen': u['user_gen'] ?? 'Masculino',
-            'user_etn': u['user_etn'] ?? 'No Aplica',
-            'user_img': u['user_img'] ?? 'default.png',
-            'fec_ini_form_Apr': u['fec_ini_form_Apr'],
-            'fec_fin_form_Apr': u['fec_fin_form_Apr'],
-            'ficha_Apr': u['ficha_Apr'] ?? 0,
-            'fec_registro': u['fec_registro'],
-            'hasPhoto': (u['user_img'] ?? 'default.png') != 'default.png',
-          }).toList();
+      final list =
+          data
+              .map<Map<String, dynamic>>(
+                (u) => {
+                  'user_id': u['user_id'],
+                  'user_num_ident': u['user_num_ident'],
+                  'user_name': u['user_name'] ?? '',
+                  'user_ape': u['user_ape'] ?? '',
+                  'user_email': u['user_email'] ?? '',
+                  'user_tel': u['user_tel'] ?? '',
+                  'user_rol': u['user_rol'] ?? 'Aprendiz',
+                  'user_discap': u['user_discap'] ?? 'Ninguna',
+                  'etp_form_Apr': u['etp_form_Apr'] ?? 'Lectiva',
+                  'user_gen': u['user_gen'] ?? 'Masculino',
+                  'user_etn': u['user_etn'] ?? 'No Aplica',
+                  'user_img': u['user_img'] ?? 'default.png',
+                  'fec_ini_form_Apr': u['fec_ini_form_Apr'],
+                  'fec_fin_form_Apr': u['fec_fin_form_Apr'],
+                  'ficha_Apr': u['ficha_Apr'] ?? 0,
+                  'fec_registro': u['fec_registro'],
+                  'hasPhoto': (u['user_img'] ?? 'default.png') != 'default.png',
+                },
+              )
+              .toList();
       setState(() {
         allApprentices = list;
         filteredApprentices = List.from(allApprentices);
@@ -254,7 +259,7 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
                         ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
-                          value: tempPhotoFilter,
+                          initialValue: tempPhotoFilter,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -292,7 +297,7 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
                         ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
-                          value: tempEtapaFilter,
+                          initialValue: tempEtapaFilter,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -549,145 +554,150 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
                       Expanded(
                         child: RefreshIndicator(
                           onRefresh: _fetchAprendices,
-                          child: _isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : _errorMessage != null
+                          child:
+                              _isLoading
+                                  ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                  : _errorMessage != null
                                   ? Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Text(
-                                          _errorMessage!,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 14,
-                                          ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Text(
+                                        _errorMessage!,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 14,
                                         ),
                                       ),
-                                    )
+                                    ),
+                                  )
                                   : filteredApprentices.isEmpty
-                                ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.search_off,
-                                        size: 64,
-                                        color: Colors.black54,
-                                      ),
-                                      SizedBox(height: 16),
-                                      Text(
-                                        'No se encontraron aprendices',
-                                        style: TextStyle(
+                                  ? const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.search_off,
+                                          size: 64,
                                           color: Colors.black54,
-                                          fontSize: 18,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                : ListView.builder(
-                                  itemCount: filteredApprentices.length,
-                                  itemBuilder: (context, index) {
-                                    final apprentice =
-                                        filteredApprentices[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/vista-aprendiz',
-                                          arguments: apprentice,
-                                        );
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 16,
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'No se encontraron aprendices',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 18,
+                                          ),
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.3,
+                                      ],
+                                    ),
+                                  )
+                                  : ListView.builder(
+                                    itemCount: filteredApprentices.length,
+                                    itemBuilder: (context, index) {
+                                      final apprentice =
+                                          filteredApprentices[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/vista-aprendiz',
+                                            arguments: apprentice,
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                            bottom: 16,
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          border: Border.all(
+                                          decoration: BoxDecoration(
                                             color: Colors.white.withValues(
-                                              alpha: 0.5,
+                                              alpha: 0.3,
                                             ),
-                                            width: 1,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.white.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.all(16),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 64,
+                                                height: 64,
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.person,
+                                                  color: Colors.black,
+                                                  size: 32,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${apprentice['user_name']} ${apprentice['user_ape']}',
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        height: 1.2,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 2),
+                                                    Text(
+                                                      'Ficha: ${apprentice['ficha_Apr']} | ${apprentice['etp_form_Apr']}',
+                                                      style: TextStyle(
+                                                        color: Colors.grey[600],
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${apprentice['user_email']}',
+                                                      style: TextStyle(
+                                                        color: Colors.grey[600],
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: const Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: Colors.black54,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        padding: const EdgeInsets.all(16),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 64,
-                                              height: 64,
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                Icons.person,
-                                                color: Colors.black,
-                                                size: 32,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '${apprentice['user_name']} ${apprentice['user_ape']}',
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      height: 1.2,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 2),
-                                                  Text(
-                                                    'Ficha: ${apprentice['ficha_Apr']} | ${apprentice['etp_form_Apr']}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '${apprentice['user_email']}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: const EdgeInsets.all(8),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white.withValues(
-                                                  alpha: 0.2,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: const Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: Colors.black54,
-                                                size: 16,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                                      );
+                                    },
+                                  ),
                         ),
                       ),
                     ],

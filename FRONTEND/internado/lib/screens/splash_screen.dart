@@ -57,6 +57,8 @@ class _SplashScreenState extends State<SplashScreen>
         // Usuario ya está logueado, navegar según su rol
         if (AuthService.isAdmin) {
           Navigator.pushReplacementNamed(context, '/admin-dashboard');
+        } else if (AuthService.isDelegado) {
+          Navigator.pushReplacementNamed(context, '/delegado-dashboard');
         } else {
           Navigator.pushReplacementNamed(context, '/home');
         }

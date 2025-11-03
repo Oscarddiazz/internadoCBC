@@ -8,7 +8,7 @@ const {
   deleteTask,
   completeTask
 } = require('../controllers/taskController');
-const { authenticateToken, isAdmin, isDelegadoOrAdmin } = require('../middleware/auth');
+const { authenticateToken, isAdmin, isDelegado } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
@@ -18,8 +18,10 @@ router.get('/', getAllTasks);
 router.get('/:id', getTaskById);
 
 // Rutas para administradores y delegados
-router.post('/', isDelegadoOrAdmin, createTask);
-router.put('/:id', isDelegadoOrAdmin, updateTask);
+router.post('/', isAdmin, createTask);
+router.post('/', isDelegado, createTask);
+router.put('/:id', isAdmin, updateTask);
+router.put('/:id', isDelegado, updateTask);
 router.delete('/:id', isAdmin, deleteTask);
 
 // Ruta para marcar tarea como completada (aprendices pueden completar sus tareas)

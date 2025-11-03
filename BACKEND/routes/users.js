@@ -9,7 +9,7 @@ const {
   deleteUser,
   changeUserRole
 } = require('../controllers/userController');
-const { authenticateToken, isAdmin, isDelegadoOrAdmin } = require('../middleware/auth');
+const { authenticateToken, isAdmin, isDelegado } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
@@ -22,7 +22,8 @@ router.put('/:id', isAdmin, updateUser);
 router.put('/:id/role', isAdmin, changeUserRole);
 router.delete('/:id', isAdmin, deleteUser);
 
-// Rutas para delegados y administradores
-router.get('/cedula/:cedula', isDelegadoOrAdmin, getUserByCedula);
+// Ruta compartida para obtener usuario por cédula
+router.get('/cedula/:cedula', isAdmin, getUserByCedula);
+router.get('/cedula/:cedula', isDelegado, getUserByCedula);
 
 module.exports = router;

@@ -3,7 +3,7 @@ import 'dart:async';
 import '../services/notification_service.dart';
 
 class ConnectionStatus extends StatefulWidget {
-  const ConnectionStatus({Key? key}) : super(key: key);
+  const ConnectionStatus({super.key});
 
   @override
   State<ConnectionStatus> createState() => _ConnectionStatusState();
@@ -20,7 +20,9 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
   }
 
   void _setupConnectionListener() {
-    _connectionSubscription = NotificationService().connectionStream.listen((isConnected) {
+    _connectionSubscription = NotificationService().connectionStream.listen((
+      isConnected,
+    ) {
       setState(() {
         _isConnected = isConnected;
       });

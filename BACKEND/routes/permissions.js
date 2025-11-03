@@ -7,7 +7,7 @@ const {
   respondToPermission,
   deletePermission
 } = require('../controllers/permissionController');
-const { authenticateToken, isAdmin } = require('../middleware/auth');
+const { authenticateToken, isAdmin, isAprendiz } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
@@ -17,7 +17,7 @@ router.get('/', getAllPermissions);
 router.get('/:id', getPermissionById);
 
 // Ruta para crear permiso (solo aprendices)
-router.post('/', createPermission);
+router.post('/', isAprendiz, createPermission);
 
 // Rutas para administradores
 router.put('/:id/respond', isAdmin, respondToPermission);

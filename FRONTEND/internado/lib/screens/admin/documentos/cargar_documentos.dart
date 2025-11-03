@@ -107,7 +107,7 @@ class _CargarDocumentosState extends State<CargarDocumentos> {
                       labelText: "Seleccione el tipo de archivo",
                       border: OutlineInputBorder(),
                     ),
-                    value: _tipoSeleccionado,
+                    initialValue: _tipoSeleccionado,
                     items:
                         tiposArchivos
                             .map(

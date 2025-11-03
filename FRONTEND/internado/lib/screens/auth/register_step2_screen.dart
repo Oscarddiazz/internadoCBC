@@ -362,24 +362,25 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             elevation: 0,
                           ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFF2E7D32),
+                          child:
+                              _isLoading
+                                  ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF2E7D32),
+                                      ),
+                                    ),
+                                  )
+                                  : const Text(
+                                    'Registrarse',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                )
-                              : const Text(
-                                  'Registrarse',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                         ),
                       ),
                     ],
@@ -462,7 +463,7 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
@@ -470,12 +471,13 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
                 vertical: 16,
               ),
             ),
-            items: options.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList(),
+            items:
+                options.map((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
             onChanged: onChanged,
             hint: const Text('Seleccionar'),
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black87),

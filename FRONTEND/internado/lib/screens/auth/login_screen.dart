@@ -13,7 +13,7 @@ class _LoginScreenState extends State<LoginScreen>
   late TabController _tabController;
   bool _obscurePassword = true;
   bool _isLoading = false;
-  bool _isNavigating = false;
+  final bool _isNavigating = false;
 
   // Controladores
   final TextEditingController _emailController = TextEditingController();
@@ -459,7 +459,7 @@ class _LoginScreenState extends State<LoginScreen>
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(

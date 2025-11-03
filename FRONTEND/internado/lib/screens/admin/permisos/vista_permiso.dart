@@ -7,7 +7,11 @@ class VistaPermiso extends StatefulWidget {
   final int permisoId;
   final Map<String, String> solicitud;
 
-  const VistaPermiso({Key? key, required this.permisoId, required this.solicitud}) : super(key: key);
+  const VistaPermiso({
+    super.key,
+    required this.permisoId,
+    required this.solicitud,
+  });
 
   @override
   State<VistaPermiso> createState() => _VistaPermisoState();

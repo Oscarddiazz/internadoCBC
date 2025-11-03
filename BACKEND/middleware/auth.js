@@ -65,8 +65,8 @@ const authorizeRoles = (...roles) => {
 // Middleware para verificar si es administrador
 const isAdmin = authorizeRoles('Administrador');
 
-// Middleware para verificar si es delegado o administrador
-const isDelegadoOrAdmin = authorizeRoles('Delegado', 'Administrador');
+// Middleware para verificar si es delegado
+const isDelegado = authorizeRoles('Delegado');
 
 // Middleware para verificar si es aprendiz
 const isAprendiz = authorizeRoles('Aprendiz');
@@ -75,6 +75,6 @@ module.exports = {
   authenticateToken,
   authorizeRoles,
   isAdmin,
-  isDelegadoOrAdmin,
+  isDelegado,
   isAprendiz
 };

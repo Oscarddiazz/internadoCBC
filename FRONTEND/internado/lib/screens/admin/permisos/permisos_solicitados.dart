@@ -3,7 +3,7 @@ import '../../../services/api_service.dart';
 import 'vista_permiso.dart'; // 👈 Importamos la nueva vista
 
 class SolicitudesPermiso extends StatefulWidget {
-  const SolicitudesPermiso({Key? key}) : super(key: key);
+  const SolicitudesPermiso({super.key});
 
   @override
   State<SolicitudesPermiso> createState() => _SolicitudesPermisoState();

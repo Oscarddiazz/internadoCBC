@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -49,9 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Colors.white,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -120,9 +118,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildInfoItem(
                     icon: Icons.person,
                     label: "Nombre y Apellidos:",
-                    value: _userProfile != null 
-                        ? "${_userProfile!['user_name']} ${_userProfile!['user_ape']}"
-                        : "Cargando...",
+                    value:
+                        _userProfile != null
+                            ? "${_userProfile!['user_name']} ${_userProfile!['user_ape']}"
+                            : "Cargando...",
                   ),
                   const SizedBox(height: 32),
                   // Email

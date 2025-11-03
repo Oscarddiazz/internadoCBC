@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 class NetworkConfig {
   // IP del servidor de producción - Configurada para producción real
-  static String _productionIP = '192.168.1.5'; // IP del servidor en producción
+  static String _productionIP = '192.168.1.2'; // IP del servidor en producción
   static int _port = 3000;
   
   // Modo de producción - ACTIVADO para notificaciones en tiempo real

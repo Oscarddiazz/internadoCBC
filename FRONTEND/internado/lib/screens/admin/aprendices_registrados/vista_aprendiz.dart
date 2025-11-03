@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 class StudentProfileScreen extends StatefulWidget {
   final Map<String, dynamic> apprenticeData;
 
-  const StudentProfileScreen({Key? key, required this.apprenticeData})
-    : super(key: key);
+  const StudentProfileScreen({super.key, required this.apprenticeData});
 
   @override
   State<StudentProfileScreen> createState() => _StudentProfileScreenState();

@@ -3,7 +3,7 @@ import '../services/auth_service.dart';
 import '../config/app_config.dart';
 
 class ConfiguracionScreen extends StatelessWidget {
-  const ConfiguracionScreen({Key? key}) : super(key: key);
+  const ConfiguracionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,10 @@ class ConfiguracionScreen extends StatelessWidget {
                           radius: 30,
                           backgroundColor: const Color(AppConfig.primaryColor),
                           child: Text(
-                            AuthService.currentUser?.userName.substring(0, 1).toUpperCase() ?? 'U',
+                            AuthService.currentUser?.userName
+                                    .substring(0, 1)
+                                    .toUpperCase() ??
+                                'U',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -62,7 +65,10 @@ class ConfiguracionScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(AppConfig.primaryColor),
                                   borderRadius: BorderRadius.circular(12),
@@ -85,20 +91,17 @@ class ConfiguracionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Opciones de configuración
             const Text(
               'Opciones de Cuenta',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Opción: Mi Perfil
             _buildConfigOption(
               context,
@@ -112,7 +115,7 @@ class ConfiguracionScreen extends StatelessWidget {
                 );
               },
             ),
-            
+
             // Opción: Cambiar Contraseña
             _buildConfigOption(
               context,
@@ -126,7 +129,7 @@ class ConfiguracionScreen extends StatelessWidget {
                 );
               },
             ),
-            
+
             // Opción: Notificaciones
             _buildConfigOption(
               context,
@@ -140,20 +143,17 @@ class ConfiguracionScreen extends StatelessWidget {
                 );
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Opciones del Sistema
             const Text(
               'Sistema',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Opción: Acerca de
             _buildConfigOption(
               context,
@@ -167,7 +167,7 @@ class ConfiguracionScreen extends StatelessWidget {
                 );
               },
             ),
-            
+
             // Opción: Ayuda
             _buildConfigOption(
               context,
@@ -181,9 +181,9 @@ class ConfiguracionScreen extends StatelessWidget {
                 );
               },
             ),
-            
+
             const Spacer(),
-            
+
             // Botón de Cerrar Sesión
             SizedBox(
               width: double.infinity,
@@ -200,10 +200,7 @@ class ConfiguracionScreen extends StatelessWidget {
                 icon: const Icon(Icons.logout),
                 label: const Text(
                   'Cerrar Sesión',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -228,18 +225,10 @@ class ConfiguracionScreen extends StatelessWidget {
           color: const Color(AppConfig.primaryColor),
           size: 24,
         ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.grey[600], fontSize: 12),
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
@@ -270,9 +259,7 @@ class ConfiguracionScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Cerrar Sesión'),
-          content: const Text(
-            '¿Estás seguro de que quieres cerrar sesión?',
-          ),
+          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -302,9 +289,7 @@ class ConfiguracionScreen extends StatelessWidget {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         },
       );
 
@@ -315,10 +300,9 @@ class ConfiguracionScreen extends StatelessWidget {
       Navigator.of(context).pop();
 
       // Navegar a la pantalla de login
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        '/login',
-        (Route<dynamic> route) => false,
-      );
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
 
       // Mostrar mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
@@ -330,7 +314,7 @@ class ConfiguracionScreen extends StatelessWidget {
     } catch (e) {
       // Cerrar el diálogo de carga
       Navigator.of(context).pop();
-      
+
       // Mostrar mensaje de error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

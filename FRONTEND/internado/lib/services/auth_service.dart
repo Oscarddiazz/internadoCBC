@@ -65,6 +65,12 @@ class AuthService {
             '/admin-dashboard',
             (route) => false,
           );
+        } else if (_currentUser!.userRol == RolType.delegado) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/delegado-dashboard',
+            (route) => false,
+          );
         } else {
           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
         }
@@ -126,16 +132,16 @@ class AuthService {
                 userData['fec_fin_form_Apr'] != null
                     ? DateTime.parse(userData['fec_fin_form_Apr'])
                     : DateTime.now().add(Duration(days: 365)),
-          fichaApr: userData['ficha_Apr'] ?? 0,
-        );
+            fichaApr: userData['ficha_Apr'] ?? 0,
+          );
 
-        // Autenticar en WebSocket para notificaciones
-        NotificationService().authenticateUser(
-          _currentUser!.userId!,
-          _currentUser!.userRol.toString().split('.').last,
-        );
+          // Autenticar en WebSocket para notificaciones
+          NotificationService().authenticateUser(
+            _currentUser!.userId!,
+            _currentUser!.userRol.toString().split('.').last,
+          );
 
-        return true;
+          return true;
         }
       }
       return false;

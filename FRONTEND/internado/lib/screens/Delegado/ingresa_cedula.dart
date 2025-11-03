@@ -3,7 +3,7 @@ import '../../services/api_service.dart';
 import '../../routes/app_routes.dart';
 
 class CasinoNumberPad extends StatefulWidget {
-  const CasinoNumberPad({Key? key}) : super(key: key);
+  const CasinoNumberPad({super.key});
 
   @override
   State<CasinoNumberPad> createState() => _CasinoNumberPadState();
@@ -39,18 +39,15 @@ class _CasinoNumberPadState extends State<CasinoNumberPad> {
 
     try {
       final response = await ApiService.getUserByCedula(cedulaNumber);
-      
+
       if (response['success']) {
         final userData = response['data'];
-        
+
         // Navegar a la pantalla de perfil del aprendiz
         Navigator.pushNamed(
           context,
           AppRoutes.perfilAprendiz,
-          arguments: {
-            'cedula': cedulaNumber,
-            'userData': userData,
-          },
+          arguments: {'cedula': cedulaNumber, 'userData': userData},
         );
       }
     } catch (e) {
@@ -236,22 +233,23 @@ class _CasinoNumberPadState extends State<CasinoNumberPad> {
                               elevation: 8,
                               shadowColor: Colors.black.withOpacity(0.3),
                             ),
-                            child: isLoading
-                                ? const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
+                            child:
+                                isLoading
+                                    ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : const Text(
+                                      'Consultar',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  )
-                                : const Text(
-                                    'Consultar',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                           ),
                         ),
                       ),
