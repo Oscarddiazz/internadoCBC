@@ -144,7 +144,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             case 1: // Perfil (ya estamos aquí)
               break;
             case 2: // Configuración
-              Navigator.pushNamed(context, '/configuracion');
+              Navigator.pushNamed(context, '/configuracion-admin');
               break;
           }
         },

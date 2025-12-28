@@ -364,13 +364,13 @@ class _ReporteGeneralFechaState extends State<ReporteGeneralFecha> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/perfil');
+                  Navigator.pushNamed(context, '/perfil-admin');
                 },
                 child: const Icon(Icons.person, size: 24, color: Colors.black),
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/configuracion');
+                  Navigator.pushNamed(context, '/configuracion-admin');
                 },
                 child: const Icon(
                   Icons.settings,

@@ -4,7 +4,7 @@ require('dotenv').config({ path: './config.env' });
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'ZpppAjBKkGqefsnne8rt',
+  password: process.env.DB_PASSWORD || '@2304',
   database: process.env.DB_NAME || 'internadocbc',
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,

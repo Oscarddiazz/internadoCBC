@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
+import '../routes/app_routes.dart';
 import 'api_service.dart';
 import 'notification_service.dart';
 
@@ -62,17 +63,21 @@ class AuthService {
         if (_currentUser!.userRol == RolType.administrador) {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            '/admin-dashboard',
+            AppRoutes.adminDashboard,
             (route) => false,
           );
         } else if (_currentUser!.userRol == RolType.delegado) {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            '/delegado-dashboard',
+            AppRoutes.delegadoDashboard,
             (route) => false,
           );
         } else {
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.home,
+            (route) => false,
+          );
         }
 
         return true;
@@ -203,11 +208,15 @@ class AuthService {
         if (_currentUser!.userRol == RolType.administrador) {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            '/admin-dashboard',
+            AppRoutes.adminDashboard,
             (route) => false,
           );
         } else {
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.home,
+            (route) => false,
+          );
         }
         return true;
       } else {

@@ -293,13 +293,13 @@ class _ReporteGeneralState extends State<ReporteGeneral> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/perfil');
+                    Navigator.pushNamed(context, '/perfil-admin');
                   },
                   child: Icon(Icons.person, size: 24, color: Colors.black),
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/configuracion');
+                    Navigator.pushNamed(context, '/configuracion-admin');
                   },
                   child: Icon(Icons.settings, size: 24, color: Colors.black),
                 ),

@@ -5,9 +5,9 @@ class NetworkConfig {
   // IP del servidor de producción - Configurada para producción real
   static String _productionIP = '192.168.1.2'; // IP del servidor en producción
   static int _port = 3000;
-  
+
   // Modo de producción - ACTIVADO para notificaciones en tiempo real
-  static bool _isProduction = true;
+  static bool _isProduction = false;
 
   // Obtener la URL base según la plataforma
   static String get baseUrl {
@@ -48,7 +48,9 @@ class NetworkConfig {
   static void setProductionMode(bool isProduction) {
     _isProduction = isProduction;
     if (kDebugMode) {
-      debugPrint('🔧 Modo producción: ${isProduction ? "ACTIVADO" : "DESACTIVADO"}');
+      debugPrint(
+        '🔧 Modo producción: ${isProduction ? "ACTIVADO" : "DESACTIVADO"}',
+      );
     }
   }
 

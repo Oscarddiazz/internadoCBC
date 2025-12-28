@@ -728,10 +728,10 @@ class _AprendicesRegistradosState extends State<AprendicesRegistrados> {
               Navigator.pushReplacementNamed(context, '/admin-dashboard');
               break;
             case 1: // Perfil
-              Navigator.pushNamed(context, '/perfil');
+              Navigator.pushNamed(context, '/perfil-admin');
               break;
             case 2: // Configuración
-              Navigator.pushNamed(context, '/configuracion');
+              Navigator.pushNamed(context, '/configuracion-admin');
               break;
           }
         },

@@ -75,7 +75,7 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/perfil');
+                    Navigator.pushNamed(context, '/perfil-admin');
                   },
                   child: const Icon(
                     Icons.person,
@@ -85,7 +85,7 @@ class _ReporteAprendizPageState extends State<ReporteAprendizPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/configuracion');
+                    Navigator.pushNamed(context, '/configuracion-admin');
                   },
                   child: const Icon(
                     Icons.settings,

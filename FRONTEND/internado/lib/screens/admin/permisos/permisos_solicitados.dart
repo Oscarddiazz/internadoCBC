@@ -303,10 +303,10 @@ class _SolicitudesPermisoState extends State<SolicitudesPermiso> {
               Navigator.pushReplacementNamed(context, '/admin-dashboard');
               break;
             case 1:
-              Navigator.pushNamed(context, '/perfil');
+              Navigator.pushNamed(context, '/perfil-admin');
               break;
             case 2:
-              Navigator.pushNamed(context, '/configuracion');
+              Navigator.pushNamed(context, '/configuracion-admin');
               break;
           }
         },

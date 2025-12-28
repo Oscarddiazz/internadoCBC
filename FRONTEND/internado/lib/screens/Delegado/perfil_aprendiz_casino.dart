@@ -4,12 +4,8 @@ import '../../routes/app_routes.dart';
 class PerfilAprendiz extends StatelessWidget {
   final String cedula;
   final Map<String, dynamic>? userData;
-  
-  const PerfilAprendiz({
-    super.key, 
-    required this.cedula,
-    this.userData,
-  });
+
+  const PerfilAprendiz({super.key, required this.cedula, this.userData});
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +62,9 @@ class PerfilAprendiz extends StatelessWidget {
                 _buildCard(
                   child: Center(
                     child: Text(
-                      userData != null 
-                        ? '${userData!['user_name'] ?? ''}\n${userData!['user_ape'] ?? ''}'
-                        : 'Cargando...',
+                      userData != null
+                          ? '${userData!['user_name'] ?? ''}\n${userData!['user_ape'] ?? ''}'
+                          : 'Cargando...',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 18,
@@ -215,12 +211,18 @@ class PerfilAprendiz extends StatelessWidget {
                 children: [
                   Text(
                     'Inicio de Formacion: ${userData?['fec_ini_form_Apr'] ?? 'No disponible'}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Fin de Formacion: ${userData?['fec_fin_form_Apr'] ?? 'No disponible'}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -253,10 +255,10 @@ class PerfilAprendiz extends StatelessWidget {
                 );
                 break;
               case 1:
-                Navigator.pushNamed(context, AppRoutes.perfil);
+                Navigator.pushNamed(context, AppRoutes.perfilDelegado);
                 break;
               case 2:
-                Navigator.pushNamed(context, AppRoutes.configuracion);
+                Navigator.pushNamed(context, AppRoutes.configuracionDelegado);
                 break;
             }
           },
